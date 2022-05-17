@@ -7,11 +7,19 @@ Library                         Collections
 Library                         DateTime
 
 *** Variables ***
+${APPS_WEBELEMENT}              xpath\=//h3[normalize-space()\='Apps']
+${SEARCH_APPS_WEBELEMENT}       xpath\=//input[@placeholder\="Search apps and items..."]
+${OBJECT_WEBELEMENT}            xpath\=//*[@data-label\='OBJECT']
+${CANCEL_BUTTON_WEBELEMENT}     xpath\=//button[@title\='Cancel']
+${SELECT_RECORD_WEBELEMENT}     xpath\=//tr[1]/td[1]//a[text()\='RECORD']
+${US_TITLE_TEXTBOX_WEBELEMENT}                              //*[@name\="copado__User_Story_Title__c"]
+${USID_WEBELEMENT}              xpath\=//lightning-formatted-text[@slot\='primaryField' and contains(text(),'US')]
+
 
 *** Keywords ***
 Switch To Lightning
     [Documentation]             Switch to lightning if classic view opened
-    ${CLASSIC_VIEW}=            RunKeywordAndReturnStatus                               VerifyText                  Switch to Lightning Experience    timeout=2
+    ${CLASSIC_VIEW}=            RunKeywordAndReturnStatus                               VerifyText                  Switch to Lightning Experience               timeout=2
     RunKeywordIf                ${CLASSIC_VIEW}             ClickText                   Switch to Lightning Experience
 
 Start Suite
@@ -56,4 +64,57 @@ Open Object
     ${OBJECT_XPATH}=            Replace String              ${OBJECT_WEBELEMENT}        OBJECT                      ${OBJECT}
     ClickElement                ${OBJECT_XPATH}
     #Refresh and verify object, except for "Work Manager" and "Pipeline Manager" as it works differently
-    Run Keyword If              '${OBJECT}' != 'Work Manager' and '${OBJECT}' != 'Pipeline Manager'                 Check object      ${OBJECT}
+    Run Keyword If              '${OBJECT}' != 'Work Manager' and '${OBJECT}' != 'Pipeline Manager'                 Check object     ${OBJECT}
+
+Check object
+    [Documentation]             Check the object/tab name
+    [Arguments]                 ${OBJECT}
+    RefreshPage
+    VerifyPageHeader            ${OBJECT}
+
+Create User Story
+    [Documentation]             Create User Story from User Story Object and return the ID/Reference
+    [Arguments]                 ${RECORD_TYPE}              ${PROJECT}                  ${CREDENTIAL}
+    ClickText                   New
+    ${US_NAME}=                 Base method for User Story creation                     ${RECORD_TYPE}              ${PROJECT}       ${CREDENTIAL}
+    SetConfig                   PartialMatch                False
+    VerifyText                  Plan
+    VerifyText                  ${US_NAME}                  anchor=User Story Reference
+    SetConfig                   PartialMatch                True
+    ${US_ID}=                   GetText                     ${USID_WEBELEMENT}
+    [Return]                    ${US_ID}
+
+Base method for User Story creation
+    [Documentation]             Create User Story and return the User Story Name
+    [Arguments]                 ${RECORD_TYPE}              ${PROJECT}                  ${CREDENTIAL}
+    #Open "New User Story" window, select record type as per argument and enter other details
+    SetConfig                   PartialMatch                True
+    VerifyText                  New User Story
+    ClickText                   ${RECORD_TYPE}
+    ClickText                   Next
+    VerifyText                  New User Story              #Check window loaded properly
+    ${US_NAME}=                 Generate random name
+    TypeText                    ${US_TITLE_TEXTBOX_WEBELEMENT}                          ${US_NAME}
+    Select record from lookup field                         Search Projects...          ${PROJECT}
+    Sleep                       2s                          #Wait to hanldle timming issue
+    Run Keyword If              '${RECORD_TYPE}'!='Investigation'                       Select record from lookup field              Search Credentials...       ${CREDENTIAL}    #There is no Credential for Investigation type.
+    #Save the US and return the user story name
+    ClickText                   Save                        2
+    [Return]                    ${US_NAME}
+
+Select record from lookup field
+    [Documentation]             Search and select the record in the lookup field
+    [Arguments]                 ${FIELD}                    ${RECORD}
+    PressKey                    ${FIELD}                    ${RECORD}
+    VerifyText                  Show All Results
+    PressKey                    ${FIELD}                    {ENTER}
+    VerifyText                  ${CANCEL_BUTTON_WEBELEMENT}                             #Checking modal openend
+    ${RECORD_WEBELEMENT}=       Replace String              ${SELECT_RECORD_WEBELEMENT}                             RECORD           ${RECORD}
+    ClickText                   ${RECORD_WEBELEMENT}
+
+Generate random name
+    [Documentation]             Generate random name and return
+    ${RANDOM_STRING1}=          Generate Random String
+    ${RANDOM_STRING2}=          Generate Random String      6                           [NUMBERS]
+    ${NAME}=                    Evaluate                    "Automation_" + "${RANDOM_STRING1}" + "${RANDOM_STRING2}"                #Using random string twice to avoid duplicate name
+    [Return]                    ${NAME}
