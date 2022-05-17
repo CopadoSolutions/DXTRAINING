@@ -39,6 +39,7 @@ ${MCDX_INT_ORG}                 mcdxautomationplatform_int
 ${MCDX_STAG_ORG}                mcdxautomationplatform_stg
 ${MCDX_PROD_ORG}                QKQrMCqDsM@copa.do.sandbox
 ${MCDX_GIT_REPO}                MCDXAutomation_Platform
+${ADMIN_USERNAME}               qa-qentinel-automation@copado.com 
 ${AUTOMATION_ORG_URL}           https://copado-19e-dev-ed.my.salesforce.com
 ${TOKEN_ENDPOINT}               https://login.salesforce.com/services/oauth2/token
 
@@ -376,7 +377,7 @@ Delete Source Org Object All Records
     [Arguments]                 ${SOBJECT_API_NAME}         ${SOBJECT_FIELD_API_NAME}                               ${PREFIX_TEXT}
     #SOBJECT_API_NAME: Copado API name of the object which needs to be deleted
     #SOBJECT_FIELD_API_NAME: Copado API name of the perticular field inside object for which the Id needs to be fetched
-    ${CONNECTION_RESPONSE}=     Salesforce Connect          ${ORG_USERNAME}             ${SOURCE_ORG_CLIENTID}      ${SOURCE_CLIENT_SECRET}     ${SOURCE_SECRET_TOKEN}      ${TOKEN_ENDPOINT}
+    ${CONNECTION_RESPONSE}=     Salesforce Connect          ${ADMIN_USERNAME}           ${SOURCE_ORG_CLIENTID}      ${SOURCE_CLIENT_SECRET}     ${SOURCE_SECRET_TOKEN}      ${TOKEN_ENDPOINT}
     ${ACCESS_TOKEN}=            Get Access Token            ${CONNECTION_RESPONSE}
     ${RES_JSON_LIST}=           Get Object List             ${ACCESS_TOKEN}             ${SOBJECT_API_NAME}         ${SOBJECT_FIELD_API_NAME}                               ${AUTOMATION_ORG_URL}
     Delete Automation Records                               ${RES_JSON_LIST}            ${SOBJECT_FIELD_API_NAME}                               ${ACCESS_TOKEN}             ${SOBJECT_API_NAME}    ${AUTOMATION_ORG_URL}    ${PREFIX_TEXT}
