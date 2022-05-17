@@ -38,7 +38,6 @@ ${MCDX_DEV2_ORG}                mcdxautomationplatform_dev2
 ${MCDX_INT_ORG}                 mcdxautomationplatform_int
 ${MCDX_STAG_ORG}                mcdxautomationplatform_stg
 ${MCDX_PROD_ORG}                QKQrMCqDsM@copa.do.sandbox
-${PREFIX_TEXT}                  Automation_
 ${MCDX_GIT_REPO}                MCDXAutomation_Platform
 ${AUTOMATION_ORG_URL}           https://copado-19e-dev-ed.my.salesforce.com
 ${TOKEN_ENDPOINT}               https://login.salesforce.com/services/oauth2/token
@@ -136,7 +135,7 @@ Base method for User Story creation
     TypeText                    ${US_TITLE_TEXTBOX_WEBELEMENT}                          ${US_NAME}
     Select record from lookup field                         Search Projects...          ${PROJECT}
     Sleep                       2s                          #Wait to hanldle timming issue
-    Run Keyword If              '${RECORD_TYPE}'!='Investigation'                       Select record from lookup field                         Search Credentials...       ${CREDENTIAL}    #There is no Credential for Investigation type.
+    Run Keyword If              '${RECORD_TYPE}'!='Investigation'                       Select record from lookup field                         Search Credentials...       ${CREDENTIAL}        #There is no Credential for Investigation type.
     #Save the US and return the user story name
     ClickText                   Save                        2
     [Return]                    ${US_NAME}
@@ -360,24 +359,24 @@ Get Latest Committed Files Path
     [Arguments]                 ${REPOSITORY_NAME}          ${BRANCH_NAME}
     #REPOSITORY_NAME: The name of the git repository from where the commited files path needs to be retrieved
     #BRANCH_NAME: Name of the git branch for the last commit
-    ${FILE_PATH}=               Get Commit Files Path       ${GIT_ACCESS_TOKEN}    ${REPOSITORY_NAME}          ${BRANCH_NAME}
+    ${FILE_PATH}=               Get Commit Files Path       ${GIT_ACCESS_TOKEN}         ${REPOSITORY_NAME}          ${BRANCH_NAME}
     [Return]                    ${FILE_PATH}
 
 Get Branch File Content
     [Documentation]             To get the file contents from a branch based on the file path
     ...                         Author: Dhanesh; 6th Jan, 2022
     [Arguments]                 ${FILE_PATH}                ${REPOSITORY_NAME}
-    ${CONTENT_SHA}=             Get Branch File Content Sha                        ${GIT_ACCESS_TOKEN}         ${REPOSITORY_NAME}    ${FILE_PATH}
+    ${CONTENT_SHA}=             Get Branch File Content Sha                             ${GIT_ACCESS_TOKEN}         ${REPOSITORY_NAME}          ${FILE_PATH}
     [Return]                    ${CONTENT_SHA}
 
 Delete Source Org Object All Records
     [Documentation]             To invoke the python functions and delete all the the source org object records
     ...                         Author: Dhanesh
     ...                         Date: 16th DEC 2021
-    [Arguments]                 ${SOBJECT_API_NAME}         ${SOBJECT_FIELD_API_NAME}
+    [Arguments]                 ${SOBJECT_API_NAME}         ${SOBJECT_FIELD_API_NAME}                               ${PREFIX_TEXT}
     #SOBJECT_API_NAME: Copado API name of the object which needs to be deleted
     #SOBJECT_FIELD_API_NAME: Copado API name of the perticular field inside object for which the Id needs to be fetched
-    ${CONNECTION_RESPONSE}=     Salesforce Connect          ${ORG_USERNAME}             ${SOURCE_ORG_CLIENTID}    ${SOURCE_CLIENT_SECRET}     ${SOURCE_SECRET_TOKEN}      ${TOKEN_ENDPOINT}
+    ${CONNECTION_RESPONSE}=     Salesforce Connect          ${ORG_USERNAME}             ${SOURCE_ORG_CLIENTID}      ${SOURCE_CLIENT_SECRET}     ${SOURCE_SECRET_TOKEN}      ${TOKEN_ENDPOINT}
     ${ACCESS_TOKEN}=            Get Access Token            ${CONNECTION_RESPONSE}
-    ${RES_JSON_LIST}=           Get Object List             ${ACCESS_TOKEN}             ${SOBJECT_API_NAME}       ${SOBJECT_FIELD_API_NAME}                               ${AUTOMATION_ORG_URL}
-    Delete All Records          ${RES_JSON_LIST}            ${SOBJECT_FIELD_API_NAME}                             ${ACCESS_TOKEN}             ${SOBJECT_API_NAME}         ${AUTOMATION_ORG_URL}
+    ${RES_JSON_LIST}=           Get Object List             ${ACCESS_TOKEN}             ${SOBJECT_API_NAME}         ${SOBJECT_FIELD_API_NAME}                               ${AUTOMATION_ORG_URL}
+    Delete Automation Records                               ${RES_JSON_LIST}            ${SOBJECT_FIELD_API_NAME}                               ${ACCESS_TOKEN}             ${SOBJECT_API_NAME}    ${AUTOMATION_ORG_URL}    ${PREFIX_TEXT}
