@@ -36,6 +36,8 @@ ${MCDX_DEV2_ORG}                mcdxautomationplatform_dev2
 ${MCDX_INT_ORG}                 mcdxautomationplatform_int
 ${MCDX_STAG_ORG}                mcdxautomationplatform_stg
 ${MCDX_PROD_ORG}                QKQrMCqDsM@copa.do.sandbox
+${PREFIX_TEXT}                  Automation_
+${MCDX_GIT_REPO}                MCDXAutomation_Platform
 
 *** Keywords ***
 Switch To Lightning
