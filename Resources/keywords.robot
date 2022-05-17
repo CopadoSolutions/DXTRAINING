@@ -23,11 +23,14 @@ ${FLS_CHECKBOX_WEBELEMENT}      xpath\=//th[text()\='ELEMENT']/parent::tr/child:
 ${PULL_CHANGES_WEBELEMENT}      xpath\=//button[@title\='Pull Changes']
 ${COMMIT_CHANGES_BUTTON_WEBELEMENT}                         xpath\=//lightning-button[@copado-userstorycommitheader_userstorycommitheader]/button[text()\='Commit Changes']
 ${METADATA_CHECKBOX_WEBELEMENT}                             xpath\=//lightning-base-formatted-text[contains(text(),'{METADATA}')]/ancestor::tr//input[@type\='checkbox']/parent::span/parent::lightning-primitive-cell-checkbox
+${JOB_RECORD_WEBELEMENT}        xpath\=(//span[text()\='In Progress']/ancestor::tr//a[contains(text(),'JE')])[1]
+${JOB_COMPLETED_WEBELEMENT}     xpath\=//strong[text()\='{JOB}']/ancestor::c-result-detail//div[@class\='info']/div[1]
+${GIT_BRANCH_WEBELEMENT}        xpath\=//span[contains(@class,'field-label') and text()\='View in Git']/ancestor::flexipage-field//a
 
 *** Keywords ***
 Switch To Lightning
     [Documentation]             Switch to lightning if classic view opened
-    ${CLASSIC_VIEW}=            RunKeywordAndReturnStatus                               VerifyText                  Switch to Lightning Experience                 timeout=2
+    ${CLASSIC_VIEW}=            RunKeywordAndReturnStatus                               VerifyText                  Switch to Lightning Experience                          timeout=2
     RunKeywordIf                ${CLASSIC_VIEW}             ClickText                   Switch to Lightning Experience
 
 Start Suite
@@ -68,7 +71,7 @@ Search Field Inside Object
     FOR                         ${I}                        IN RANGE                    0                           2
         ClickElement            ${SEARCH_FIELD_WEBELEMENT}
         TypeText                ${SEARCH_FIELD_WEBELEMENT}                              ${FIELD}
-        ${SEARCHED_RECORD}=     Replace String              ${SEARCHED_FIELD_WEBELEMENT}                            FIELD              ${FIELD}
+        ${SEARCHED_RECORD}=     Replace String              ${SEARCHED_FIELD_WEBELEMENT}                            FIELD                       ${FIELD}
         ${ISPRESENT}=           IsText                      ${SEARCHED_RECORD}          timeout=60s
         Exit For Loop If        ${ISPRESENT}
     END
@@ -84,7 +87,7 @@ Open Object
     ${OBJECT_XPATH}=            Replace String              ${OBJECT_WEBELEMENT}        OBJECT                      ${OBJECT}
     ClickElement                ${OBJECT_XPATH}
     #Refresh and verify object, except for "Work Manager" and "Pipeline Manager" as it works differently
-    Run Keyword If              '${OBJECT}' != 'Work Manager' and '${OBJECT}' != 'Pipeline Manager'                 Check object       ${OBJECT}
+    Run Keyword If              '${OBJECT}' != 'Work Manager' and '${OBJECT}' != 'Pipeline Manager'                 Check object                ${OBJECT}
 
 Check object
     [Documentation]             Check the object/tab name
@@ -96,7 +99,7 @@ Create User Story
     [Documentation]             Create User Story from User Story Object and return the ID/Reference
     [Arguments]                 ${RECORD_TYPE}              ${PROJECT}                  ${CREDENTIAL}
     ClickText                   New
-    ${US_NAME}=                 Base method for User Story creation                     ${RECORD_TYPE}              ${PROJECT}         ${CREDENTIAL}
+    ${US_NAME}=                 Base method for User Story creation                     ${RECORD_TYPE}              ${PROJECT}                  ${CREDENTIAL}
     SetConfig                   PartialMatch                False
     VerifyText                  Plan
     VerifyText                  ${US_NAME}                  anchor=User Story Reference
@@ -117,7 +120,7 @@ Base method for User Story creation
     TypeText                    ${US_TITLE_TEXTBOX_WEBELEMENT}                          ${US_NAME}
     Select record from lookup field                         Search Projects...          ${PROJECT}
     Sleep                       2s                          #Wait to hanldle timming issue
-    Run Keyword If              '${RECORD_TYPE}'!='Investigation'                       Select record from lookup field                Search Credentials...       ${CREDENTIAL}    #There is no Credential for Investigation type.
+    Run Keyword If              '${RECORD_TYPE}'!='Investigation'                       Select record from lookup field                         Search Credentials...       ${CREDENTIAL}    #There is no Credential for Investigation type.
     #Save the US and return the user story name
     ClickText                   Save                        2
     [Return]                    ${US_NAME}
@@ -129,14 +132,14 @@ Select record from lookup field
     VerifyText                  Show All Results
     PressKey                    ${FIELD}                    {ENTER}
     VerifyText                  ${CANCEL_BUTTON_WEBELEMENT}                             #Checking modal openend
-    ${RECORD_WEBELEMENT}=       Replace String              ${SELECT_RECORD_WEBELEMENT}                             RECORD             ${RECORD}
+    ${RECORD_WEBELEMENT}=       Replace String              ${SELECT_RECORD_WEBELEMENT}                             RECORD                      ${RECORD}
     ClickText                   ${RECORD_WEBELEMENT}
 
 Generate random name
     [Documentation]             Generate random name and return
     ${RANDOM_STRING1}=          Generate Random String
     ${RANDOM_STRING2}=          Generate Random String      6                           [NUMBERS]
-    ${NAME}=                    Evaluate                    "Automation_" + "${RANDOM_STRING1}" + "${RANDOM_STRING2}"                  #Using random string twice to avoid duplicate name
+    ${NAME}=                    Evaluate                    "Automation_" + "${RANDOM_STRING1}" + "${RANDOM_STRING2}"                           #Using random string twice to avoid duplicate name
     [Return]                    ${NAME}
 
 Open Object on Developer ORG
@@ -181,7 +184,7 @@ Search record on object main page
     [Documentation]             Search record on object main page
     [Arguments]                 ${RECORD}
     Run Keyword And Ignore Error                            ClickText                   Select a List View
-    ${ISPRESENT}=               Run Keyword And Return Status                           VerifyText                  All                timeout=5s
+    ${ISPRESENT}=               Run Keyword And Return Status                           VerifyText                  All                         timeout=5s
     Run Keyword If              ${ISPRESENT}                ClickText                   All
     Run Keyword And Ignore Error                            ClickText                   ALL Env                     timeout=2s
     VerifyNoText                Loading
@@ -189,7 +192,7 @@ Search record on object main page
     VerifyNoText                Loading
     ClickElement                ${REFRESH_BUTTON_WEBELEMENT}
     VerifyNoText                Loading
-    ${SEARCHED_RECORD}=         Replace String              ${SEARCHED_RECORD_WEBELEMENT}                           RECORD             ${RECORD}
+    ${SEARCHED_RECORD}=         Replace String              ${SEARCHED_RECORD_WEBELEMENT}                           RECORD                      ${RECORD}
     VerifyElement               ${SEARCHED_RECORD}
     VerifyNoText                No items to display
 
@@ -246,7 +249,7 @@ Update FLS To Custom Profile
     VerifyAll                   Field Information, Set Field-Level Security, View Field Accessibility
     ClickText                   Set Field-Level Security
     VerifyAll                   Save, Cancel
-    ${ELEMENT}=                 Replace String              ${FLS_CHECKBOX_WEBELEMENT}                              ELEMENT            ${PROFILE_NAME}
+    ${ELEMENT}=                 Replace String              ${FLS_CHECKBOX_WEBELEMENT}                              ELEMENT                     ${PROFILE_NAME}
     ClickElement                ${ELEMENT}
     ClickText                   Save
     VerifyAll                   Set Field-Level Security, View Field Accessibility
@@ -282,7 +285,7 @@ MC Select Metadata
     ${LENGTH}=                  Get Length                  ${METADATA}
     FOR                         ${I}                        IN RANGE                    0                           ${LENGTH}
         ${EXPECTED}=            Get From List               ${METADATA}                 ${I}
-        ${SELECT_METADATA}=     Replace String              ${METADATA_CHECKBOX_WEBELEMENT}                         {METADATA}         ${EXPECTED}
+        ${SELECT_METADATA}=     Replace String              ${METADATA_CHECKBOX_WEBELEMENT}                         {METADATA}                  ${EXPECTED}
         SetConfig               PartialMatch                False
         TypeText                Search                      ${EXPECTED}
         PressKey                Search                      {ENTER}
@@ -306,3 +309,31 @@ MC Commit Metadata
     SetConfig                   PartialMatch                True
     VerifyNoText                Loading
     VerifyText                  User Story Commit
+
+Verify Commit Job Execution
+    [Documentation]             To verify the job execution is succesfully completed after committing any metadata
+    ...                         Author: Dhanesh
+    ...                         Date: 9th NOV 2021
+    ...                         update: 7th JAN 2022
+    Open Object                 Job Executions
+    VerifyText                  Job Execution Name
+    ${ISPRESENT}=               Run Keyword And Return Status                           VerifyElement               ${JOB_RECORD_WEBELEMENT}    timeout=2s
+    IF                          '${ISPRESENT}' == 'False'
+        Run Keyword And Ignore Error                        ClickText                   Select List View            timeout=2s
+        ClickText               All
+    END
+    ClickElement                ${JOB_RECORD_WEBELEMENT}
+    VerifyText                  SFDX Commit
+    ${COMPLETED_STATUS}=        Replace String              ${JOB_COMPLETED_WEBELEMENT}                             {JOB}                       Commit
+    VerifyElementText           ${COMPLETED_STATUS}         Completed                   timeout=600s                reason=To wait until the job executions to get completed
+
+Get Feature Branch Name
+    [Documentation]             To get the feature branch name from the user story
+    ...                         Author: Dhanesh
+    ...                         Date: 13th Jan, 2022
+    VerifyText                  Build
+    ClickText                   Build
+    VerifyText                  View in Git                 anchor=Information
+    ${BRANCH_NAME}=             GetText                     ${GIT_BRANCH_WEBELEMENT}
+    Should Not Be Empty         ${BRANCH_NAME}              msg=The Git branch field should not be empty
+    [Return]                    ${BRANCH_NAME}
