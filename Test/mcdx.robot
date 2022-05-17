@@ -18,12 +18,11 @@ Verify commit operation for Profiles and Fields
 
     #Given
     Open Object                 User Stories
-    ${US_ID}=                   Create User Story           User Story                ${MCDX_PROJECT}    ${MCDX_DEV1_ORG}
+    ${US_ID}=                   Create User Story           User Story                  ${MCDX_PROJECT}      ${MCDX_DEV1_ORG}
     Open Sandbox Developer ORG                              ${MCDX_DEV1_ORG}
     Open Object on Developer ORG                            ${CONTACT_OBJECT}
     ${FIELD}=                   Add new field to object
-    ${PROFILE_NAME}=            Create Profile From Existing Profile                  Marketing User
-    Update FLS To Custom Profile                            ${CONTACT_OBJECT}         ${FIELD}           ${PROFILE_NAME}
+    ${PROFILE_NAME}=            Create Profile From Existing Profile                    Marketing User
     CloseWindow
     VerifyNoText                Loading
     CloseWindow
@@ -35,7 +34,7 @@ Verify commit operation for Profiles and Fields
     ClickText                   Commit Changes
     ${CURRENT_DATE}=            Get Current Date            result_format=%d.%m.%Y
     Pull Changes                ${CURRENT_DATE}             00:00
-    ${METADATA}=                Create List                 ${FIELD}                  ${PROFILE_NAME}
+    ${METADATA}=                Create List                 ${FIELD}                    ${PROFILE_NAME}
     MC Select Metadata          ${METADATA}
     MC Commit Metadata
 
@@ -46,7 +45,12 @@ Verify commit operation for Profiles and Fields
     ${FEATURE_BRANCH_NAME}=     Get Feature Branch Name
 
     #Then: Git assertion
-    #${FILES_PATH}=             Get Latest Committed Files Path                       ${MCDX_GIT_REPO}                        ${BRANCH_NAME}
-    #${CONTENT_SHA}=            Get Branch File Content     ${FILES_PATH}[0]?ref=${BRANCH_NAME}          ${MCDX_GIT_REPO}
-    #${EXPECTED}=               Set Variable                <recordTypes> <description></description> <label>${TRANSLATION_NAME}</label> <name>${RECORDTYPE_NAME}</name> </recordTypes>
-    #Should Contain             ${CONTENT_SHA}[0]           ${EXPECTED}               strip_spaces=True                       collapse_spaces=True
+    ${FILES_PATH}=              Get Latest Committed Files Path                         ${MCDX_GIT_REPO}     ${FEATURE_BRANCH_NAME}
+    ${FILE_PATH_1}=             Set Variable                ${FILES_PATH}[1]?ref=${FEATURE_BRANCH_NAME}
+    ${FILE_PATH_2}=             Set Variable                ${FILES_PATH}[0]?ref=${FEATURE_BRANCH_NAME}
+    ${CONTENT_SHA}=             Get Branch File Content     ${FILE_PATH_1}                ${MCDX_GIT_REPO}
+    ${EXPECTED_PERMISSION}=     Set Variable                <fieldPermissions> <editable>true</editable> <field>${CONTACT_OBJECT}.${FIELD}__c</field> <readable>true</readable> </fieldPermissions>
+    ${EXPECTED_FIELD}=          Set Variable                <fullName>${FIELD}__c</fullName>
+    Should Contain              ${CONTENT_SHA}[0]           ${EXPECTED_PERMISSION}        strip_spaces=True    collapse_spaces=True
+    Should Contain              ${CONTENT_SHA}[0]           ${EXPECTED_FIELD}             strip_spaces=True    collapse_spaces=True
+    
