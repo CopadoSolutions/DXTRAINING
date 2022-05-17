@@ -6,6 +6,7 @@ Library                         QForce
 Library                         Collections
 Library                         DateTime
 Library                         Github.py
+Library                         DeleteSFObject.py
 
 *** Variables ***
 ${APPS_WEBELEMENT}              xpath\=//h3[normalize-space()\='Apps']
@@ -39,6 +40,8 @@ ${MCDX_STAG_ORG}                mcdxautomationplatform_stg
 ${MCDX_PROD_ORG}                QKQrMCqDsM@copa.do.sandbox
 ${PREFIX_TEXT}                  Automation_
 ${MCDX_GIT_REPO}                MCDXAutomation_Platform
+${AUTOMATION_ORG_URL}           https://copado-19e-dev-ed.my.salesforce.com
+${TOKEN_ENDPOINT}               https://login.salesforce.com/services/oauth2/token
 
 *** Keywords ***
 Switch To Lightning
@@ -366,3 +369,15 @@ Get Branch File Content
     [Arguments]                 ${FILE_PATH}                ${REPOSITORY_NAME}
     ${CONTENT_SHA}=             Get Branch File Content Sha                        ${GIT_ACCESS_TOKEN}         ${REPOSITORY_NAME}    ${FILE_PATH}
     [Return]                    ${CONTENT_SHA}
+
+Delete Source Org Object All Records
+    [Documentation]             To invoke the python functions and delete all the the source org object records
+    ...                         Author: Dhanesh
+    ...                         Date: 16th DEC 2021
+    [Arguments]                 ${SOBJECT_API_NAME}         ${SOBJECT_FIELD_API_NAME}
+    #SOBJECT_API_NAME: Copado API name of the object which needs to be deleted
+    #SOBJECT_FIELD_API_NAME: Copado API name of the perticular field inside object for which the Id needs to be fetched
+    ${CONNECTION_RESPONSE}=     Salesforce Connect          ${ORG_USERNAME}             ${SOURCE_ORG_CLIENTID}    ${SOURCE_CLIENT_SECRET}     ${SOURCE_SECRET_TOKEN}      ${TOKEN_ENDPOINT}
+    ${ACCESS_TOKEN}=            Get Access Token            ${CONNECTION_RESPONSE}
+    ${RES_JSON_LIST}=           Get Object List             ${ACCESS_TOKEN}             ${SOBJECT_API_NAME}       ${SOBJECT_FIELD_API_NAME}                               ${AUTOMATION_ORG_URL}
+    Delete All Records          ${RES_JSON_LIST}            ${SOBJECT_FIELD_API_NAME}                             ${ACCESS_TOKEN}             ${SOBJECT_API_NAME}         ${AUTOMATION_ORG_URL}
