@@ -14,7 +14,8 @@ ${CANCEL_BUTTON_WEBELEMENT}     xpath\=//button[@title\='Cancel']
 ${SELECT_RECORD_WEBELEMENT}     xpath\=//tr[1]/td[1]//a[text()\='RECORD']
 ${US_TITLE_TEXTBOX_WEBELEMENT}                              //*[@name\="copado__User_Story_Title__c"]
 ${USID_WEBELEMENT}              xpath\=//lightning-formatted-text[@slot\='primaryField' and contains(text(),'US')]
-
+${REFRESH_BUTTON_WEBELEMENT}                            xpath\=//button[@title\='Refresh']//lightning-primitive-icon
+${SEARCHED_RECORD_WEBELEMENT}                           xpath\=(//tr[1]//a[normalize-space()\='RECORD'])[1]
 
 *** Keywords ***
 Switch To Lightning
@@ -118,3 +119,57 @@ Generate random name
     ${RANDOM_STRING2}=          Generate Random String      6                           [NUMBERS]
     ${NAME}=                    Evaluate                    "Automation_" + "${RANDOM_STRING1}" + "${RANDOM_STRING2}"                #Using random string twice to avoid duplicate name
     [Return]                    ${NAME}
+
+Open Object on Developer ORG
+    [Documentation]             Open Object on developer ORG
+    [Arguments]                 ${OBJECT}
+    VerifyText                  Object Manager
+    ClickText                   Object Manager
+    VerifyText                  Schema Builder
+    TypeText                    Quick Find                  ${OBJECT}                   anchor=Schema Builder
+    Sleep                       2s                          #Added to wait for page load
+    VerifyText                  ${OBJECT}                   2
+    ClickText                   ${OBJECT}
+    ClickText                   Fields & Relationships
+
+Open Sandbox Developer ORG
+    [Documentation]             To open the developer org through sandbox from any user story
+    ...                         Author: Dhanesh
+    ...                         Date: 11th NOV 2021
+    ...                         Modified: 30th NOV 2021
+    [Arguments]                 ${ORG}
+    LaunchApp                   Credentials
+    VerifyNoText                Loading
+    Search record on object main page                       ${ORG}
+    ClickText                   ${ORG}
+    VerifyText                  Open Org
+    ClickText                   Open Org
+    Sleep                       10s                         reason=To handle the time taken to load to open the next tab
+    VerifyNoText                Loading                     anchor=Hide message
+    SwitchWindow                2
+    VerifyNoText                Loading                     anchor=Hide message
+    VerifyText                  Sandbox
+    ClickText                   Setup
+    VerifyText                  Setup for current app
+    ClickText                   Setup for current app
+    Sleep                       10s                         reason=To handle the time taken to load to open the next tab
+    VerifyNoText                Loading                     anchor=Hide message
+    SwitchWindow                3
+    VerifyNoText                Loading                     anchor=Hide message
+    VerifyText                  Object Manager
+
+Search record on object main page
+    [Documentation]             Search record on object main page
+    [Arguments]                 ${RECORD}
+    Run Keyword And Ignore Error                            ClickText                   Select a List View
+    ${ISPRESENT}=               Run Keyword And Return Status                           VerifyText                  All               timeout=5s
+    Run Keyword If              ${ISPRESENT}                ClickText                   All
+    Run Keyword And Ignore Error                            ClickText                   ALL Env                     timeout=2s
+    VerifyNoText                Loading
+    PressKey                    Search this list...         ${RECORD}
+    VerifyNoText                Loading
+    ClickElement                ${REFRESH_BUTTON_WEBELEMENT}
+    VerifyNoText                Loading
+    ${SEARCHED_RECORD}=         Replace String              ${SEARCHED_RECORD_WEBELEMENT}                           RECORD            ${RECORD}
+    VerifyElement               ${SEARCHED_RECORD}
+    VerifyNoText                No items to display
