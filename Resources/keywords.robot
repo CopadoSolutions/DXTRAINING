@@ -5,6 +5,7 @@ Library                         QWeb
 Library                         QForce
 Library                         Collections
 Library                         DateTime
+Library                         Github.py
 
 *** Variables ***
 ${APPS_WEBELEMENT}              xpath\=//h3[normalize-space()\='Apps']
@@ -348,3 +349,20 @@ Get Feature Branch Name
     ${BRANCH_NAME}=             GetText                     ${GIT_BRANCH_WEBELEMENT}
     Should Not Be Empty         ${BRANCH_NAME}              msg=The Git branch field should not be empty
     [Return]                    ${BRANCH_NAME}
+
+Get Latest Committed Files Path
+    [Documentation]             To get the latest committed files path as a list from a branch in the git repository
+    ...                         Author: Dhanesh
+    ...                         Date: 22th DEC, 2021
+    [Arguments]                 ${REPOSITORY_NAME}          ${BRANCH_NAME}
+    #REPOSITORY_NAME: The name of the git repository from where the commited files path needs to be retrieved
+    #BRANCH_NAME: Name of the git branch for the last commit
+    ${FILE_PATH}=               Get Commit Files Path       ${GIT_ACCESS_TOKEN}    ${REPOSITORY_NAME}          ${BRANCH_NAME}
+    [Return]                    ${FILE_PATH}
+
+Get Branch File Content
+    [Documentation]             To get the file contents from a branch based on the file path
+    ...                         Author: Dhanesh; 6th Jan, 2022
+    [Arguments]                 ${FILE_PATH}                ${REPOSITORY_NAME}
+    ${CONTENT_SHA}=             Get Branch File Content Sha                        ${GIT_ACCESS_TOKEN}         ${REPOSITORY_NAME}    ${FILE_PATH}
+    [Return]                    ${CONTENT_SHA}
