@@ -58,4 +58,4 @@ Verify commit operation for Profiles and Fields
     Should Contain              ${CONTENT_SHA_2}[0]         ${EXPECTED_FIELD}           strip_spaces=True         collapse_spaces=True
 
     #Org Clean up
-    Delete Source Org Object All Records                    ${SOBJECT_API_NAME}         ${SOBJECT_FIELD_API_NAME}
+    Delete Source Org Object All Records                    ${SOBJECT_API_NAME}         ${SOBJECT_FIELD_API_NAME}    ${US_ID}
