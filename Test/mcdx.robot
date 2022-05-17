@@ -48,9 +48,10 @@ Verify commit operation for Profiles and Fields
     ${FILES_PATH}=              Get Latest Committed Files Path                         ${MCDX_GIT_REPO}     ${FEATURE_BRANCH_NAME}
     ${FILE_PATH_1}=             Set Variable                ${FILES_PATH}[1]?ref=${FEATURE_BRANCH_NAME}
     ${FILE_PATH_2}=             Set Variable                ${FILES_PATH}[0]?ref=${FEATURE_BRANCH_NAME}
-    ${CONTENT_SHA}=             Get Branch File Content     ${FILE_PATH_1}                ${MCDX_GIT_REPO}
+    ${CONTENT_SHA_1}=           Get Branch File Content     ${FILE_PATH_1}                ${MCDX_GIT_REPO}
+    ${CONTENT_SHA_2}=           Get Branch File Content     ${FILE_PATH_2}                ${MCDX_GIT_REPO}
     ${EXPECTED_PERMISSION}=     Set Variable                <fieldPermissions> <editable>true</editable> <field>${CONTACT_OBJECT}.${FIELD}__c</field> <readable>true</readable> </fieldPermissions>
     ${EXPECTED_FIELD}=          Set Variable                <fullName>${FIELD}__c</fullName>
-    Should Contain              ${CONTENT_SHA}[0]           ${EXPECTED_PERMISSION}        strip_spaces=True    collapse_spaces=True
-    Should Contain              ${CONTENT_SHA}[0]           ${EXPECTED_FIELD}             strip_spaces=True    collapse_spaces=True
+    Should Contain              ${CONTENT_SHA_1}[0]          ${EXPECTED_PERMISSION}        strip_spaces=True    collapse_spaces=True
+    Should Contain              ${CONTENT_SHA_2}[0]          ${EXPECTED_FIELD}             strip_spaces=True    collapse_spaces=True
     
