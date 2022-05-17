@@ -55,3 +55,5 @@ Verify commit operation for Profiles and Fields
     Should Contain              ${CONTENT_SHA_1}[0]          ${EXPECTED_PERMISSION}        strip_spaces=True    collapse_spaces=True
     Should Contain              ${CONTENT_SHA_2}[0]          ${EXPECTED_FIELD}             strip_spaces=True    collapse_spaces=True
     
+    #Org Clean up 
+    
