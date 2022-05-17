@@ -23,7 +23,7 @@ Verify commit operation for Profiles and Fields
     Open Object on Developer ORG                            ${CONTACT_OBJECT}
     ${FIELD}=                   Add new field to object
     ${PROFILE_NAME}=            Create Profile From Existing Profile                  Marketing User
-    Update FLS To Custom Profile                            ${CONTACT_OBJECT}         ${CUSTOM_FIELD}    ${PROFILE_NAME}
+    Update FLS To Custom Profile                            ${CONTACT_OBJECT}         ${FIELD}           ${PROFILE_NAME}
     CloseWindow
     VerifyNoText                Loading
     CloseWindow
