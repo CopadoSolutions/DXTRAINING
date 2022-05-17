@@ -14,13 +14,20 @@ ${CANCEL_BUTTON_WEBELEMENT}     xpath\=//button[@title\='Cancel']
 ${SELECT_RECORD_WEBELEMENT}     xpath\=//tr[1]/td[1]//a[text()\='RECORD']
 ${US_TITLE_TEXTBOX_WEBELEMENT}                              //*[@name\="copado__User_Story_Title__c"]
 ${USID_WEBELEMENT}              xpath\=//lightning-formatted-text[@slot\='primaryField' and contains(text(),'US')]
-${REFRESH_BUTTON_WEBELEMENT}                            xpath\=//button[@title\='Refresh']//lightning-primitive-icon
-${SEARCHED_RECORD_WEBELEMENT}                           xpath\=(//tr[1]//a[normalize-space()\='RECORD'])[1]
+${REFRESH_BUTTON_WEBELEMENT}    xpath\=//button[@title\='Refresh']//lightning-primitive-icon
+${SEARCHED_RECORD_WEBELEMENT}                               xpath\=(//tr[1]//a[normalize-space()\='RECORD'])[1]
+${SEARCH_FIELD_WEBELEMENT}      xpath\=//input[@id\='globalQuickfind']
+${SEARCHED_FIELD_WEBELEMENT}    xpath\=//a[normalize-space()\='FIELD']/span
+${QUICK_FIND_WEBELEMENT}        xpath\=(//input[contains(@placeholder,'Quick Find')])[1]
+${FLS_CHECKBOX_WEBELEMENT}      xpath\=//th[text()\='ELEMENT']/parent::tr/child::td[2]
+${PULL_CHANGES_WEBELEMENT}      xpath\=//button[@title\='Pull Changes']
+${COMMIT_CHANGES_BUTTON_WEBELEMENT}                         xpath\=//lightning-button[@copado-userstorycommitheader_userstorycommitheader]/button[text()\='Commit Changes']
+${METADATA_CHECKBOX_WEBELEMENT}                             xpath\=//lightning-base-formatted-text[contains(text(),'{METADATA}')]/ancestor::tr//input[@type\='checkbox']/parent::span/parent::lightning-primitive-cell-checkbox
 
 *** Keywords ***
 Switch To Lightning
     [Documentation]             Switch to lightning if classic view opened
-    ${CLASSIC_VIEW}=            RunKeywordAndReturnStatus                               VerifyText                  Switch to Lightning Experience               timeout=2
+    ${CLASSIC_VIEW}=            RunKeywordAndReturnStatus                               VerifyText                  Switch to Lightning Experience                 timeout=2
     RunKeywordIf                ${CLASSIC_VIEW}             ClickText                   Switch to Lightning Experience
 
 Start Suite
@@ -55,6 +62,18 @@ End Suite
     GoTo                        ${LOGOUT_URL}               #Logout
     Close All Browsers
 
+Search Field Inside Object
+    [Documentation]             Search field inside the object
+    [Arguments]                 ${FIELD}
+    FOR                         ${I}                        IN RANGE                    0                           2
+        ClickElement            ${SEARCH_FIELD_WEBELEMENT}
+        TypeText                ${SEARCH_FIELD_WEBELEMENT}                              ${FIELD}
+        ${SEARCHED_RECORD}=     Replace String              ${SEARCHED_FIELD_WEBELEMENT}                            FIELD              ${FIELD}
+        ${ISPRESENT}=           IsText                      ${SEARCHED_RECORD}          timeout=60s
+        Exit For Loop If        ${ISPRESENT}
+    END
+    VerifyText                  ${FIELD}
+
 Open Object
     [Documentation]             Open Object
     [Arguments]                 ${OBJECT}
@@ -65,7 +84,7 @@ Open Object
     ${OBJECT_XPATH}=            Replace String              ${OBJECT_WEBELEMENT}        OBJECT                      ${OBJECT}
     ClickElement                ${OBJECT_XPATH}
     #Refresh and verify object, except for "Work Manager" and "Pipeline Manager" as it works differently
-    Run Keyword If              '${OBJECT}' != 'Work Manager' and '${OBJECT}' != 'Pipeline Manager'                 Check object     ${OBJECT}
+    Run Keyword If              '${OBJECT}' != 'Work Manager' and '${OBJECT}' != 'Pipeline Manager'                 Check object       ${OBJECT}
 
 Check object
     [Documentation]             Check the object/tab name
@@ -77,7 +96,7 @@ Create User Story
     [Documentation]             Create User Story from User Story Object and return the ID/Reference
     [Arguments]                 ${RECORD_TYPE}              ${PROJECT}                  ${CREDENTIAL}
     ClickText                   New
-    ${US_NAME}=                 Base method for User Story creation                     ${RECORD_TYPE}              ${PROJECT}       ${CREDENTIAL}
+    ${US_NAME}=                 Base method for User Story creation                     ${RECORD_TYPE}              ${PROJECT}         ${CREDENTIAL}
     SetConfig                   PartialMatch                False
     VerifyText                  Plan
     VerifyText                  ${US_NAME}                  anchor=User Story Reference
@@ -98,7 +117,7 @@ Base method for User Story creation
     TypeText                    ${US_TITLE_TEXTBOX_WEBELEMENT}                          ${US_NAME}
     Select record from lookup field                         Search Projects...          ${PROJECT}
     Sleep                       2s                          #Wait to hanldle timming issue
-    Run Keyword If              '${RECORD_TYPE}'!='Investigation'                       Select record from lookup field              Search Credentials...       ${CREDENTIAL}    #There is no Credential for Investigation type.
+    Run Keyword If              '${RECORD_TYPE}'!='Investigation'                       Select record from lookup field                Search Credentials...       ${CREDENTIAL}    #There is no Credential for Investigation type.
     #Save the US and return the user story name
     ClickText                   Save                        2
     [Return]                    ${US_NAME}
@@ -110,14 +129,14 @@ Select record from lookup field
     VerifyText                  Show All Results
     PressKey                    ${FIELD}                    {ENTER}
     VerifyText                  ${CANCEL_BUTTON_WEBELEMENT}                             #Checking modal openend
-    ${RECORD_WEBELEMENT}=       Replace String              ${SELECT_RECORD_WEBELEMENT}                             RECORD           ${RECORD}
+    ${RECORD_WEBELEMENT}=       Replace String              ${SELECT_RECORD_WEBELEMENT}                             RECORD             ${RECORD}
     ClickText                   ${RECORD_WEBELEMENT}
 
 Generate random name
     [Documentation]             Generate random name and return
     ${RANDOM_STRING1}=          Generate Random String
     ${RANDOM_STRING2}=          Generate Random String      6                           [NUMBERS]
-    ${NAME}=                    Evaluate                    "Automation_" + "${RANDOM_STRING1}" + "${RANDOM_STRING2}"                #Using random string twice to avoid duplicate name
+    ${NAME}=                    Evaluate                    "Automation_" + "${RANDOM_STRING1}" + "${RANDOM_STRING2}"                  #Using random string twice to avoid duplicate name
     [Return]                    ${NAME}
 
 Open Object on Developer ORG
@@ -162,7 +181,7 @@ Search record on object main page
     [Documentation]             Search record on object main page
     [Arguments]                 ${RECORD}
     Run Keyword And Ignore Error                            ClickText                   Select a List View
-    ${ISPRESENT}=               Run Keyword And Return Status                           VerifyText                  All               timeout=5s
+    ${ISPRESENT}=               Run Keyword And Return Status                           VerifyText                  All                timeout=5s
     Run Keyword If              ${ISPRESENT}                ClickText                   All
     Run Keyword And Ignore Error                            ClickText                   ALL Env                     timeout=2s
     VerifyNoText                Loading
@@ -170,6 +189,120 @@ Search record on object main page
     VerifyNoText                Loading
     ClickElement                ${REFRESH_BUTTON_WEBELEMENT}
     VerifyNoText                Loading
-    ${SEARCHED_RECORD}=         Replace String              ${SEARCHED_RECORD_WEBELEMENT}                           RECORD            ${RECORD}
+    ${SEARCHED_RECORD}=         Replace String              ${SEARCHED_RECORD_WEBELEMENT}                           RECORD             ${RECORD}
     VerifyElement               ${SEARCHED_RECORD}
     VerifyNoText                No items to display
+
+Add new field to object
+    [Documentation]             Add the new field to the opened object on developer ORG and return the field name
+    ClickText                   New
+    ClickText                   Text
+    ClickText                   Next
+    VerifyText                  New Custom Field
+    ${FIELD}=                   Generate random name
+    TypeText                    MasterLabel                 ${FIELD}
+    TypeText                    Length                      10
+    ClickText                   Next
+    ClickText                   Next
+    ClickText                   Save
+    Sleep                       2s
+    #Verify field created
+    Search field inside Object                              ${FIELD}
+    [Return]                    ${FIELD}
+
+Create Profile From Existing Profile
+    [Documentation]             To create a profile from existing profile and return the auto generated profile name
+    ...                         Author: Shweta
+    ...                         Date: 24 November, 2021
+    [Arguments]                 ${EXISTING_PROFILE_NAME}    #Enter the name of any existing profile type available
+    Open component on Setup Home tab                        Profiles
+    VerifyText                  Didn't find what you're looking for? Try using Global Search.
+    ${PROFILE_NAME}=            Generate random name
+    VerifyAll                   Edit, Delete, Create New View
+    ClickText                   New Profile                 anchor=All Profiles
+    VerifyText                  Clone Profile
+    DropDown                    Existing Profile            option=${EXISTING_PROFILE_NAME}
+    TypeText                    Profile Name                ${PROFILE_NAME}
+    ClickText                   Save                        anchor=Cancel
+    VerifyText                  ${PROFILE_NAME}
+    [Return]                    ${PROFILE_NAME}
+
+Open component on Setup Home tab
+    [Documentation]             Open any component from Home tab of the Setup page      Ex: Open Profiles/User/Apex Class
+    [Arguments]                 ${COMPONENT}
+    VerifyText                  Object Manager
+    ClickText                   Home
+    TypeText                    ${QUICK_FIND_WEBELEMENT}    ${COMPONENT}
+    VerifyTextCount             ${COMPONENT}                1
+    ClickText                   ${COMPONENT}
+
+Update FLS To Custom Profile
+    [Documentation]             To access profile and update object level security
+    ...                         Author: Ram Naidu - 26th Nov, 2021
+    [Arguments]                 ${OBJECT}                   ${FIELD}                    ${PROFILE_NAME}
+    Open Object on Developer ORG                            ${OBJECT}
+    Search field inside Object                              ${FIELD}
+    ClickText                   ${FIELD}
+    VerifyAll                   Field Information, Set Field-Level Security, View Field Accessibility
+    ClickText                   Set Field-Level Security
+    VerifyAll                   Save, Cancel
+    ${ELEMENT}=                 Replace String              ${FLS_CHECKBOX_WEBELEMENT}                              ELEMENT            ${PROFILE_NAME}
+    ClickElement                ${ELEMENT}
+    ClickText                   Save
+    VerifyAll                   Set Field-Level Security, View Field Accessibility
+
+Open record from object main page    
+    [Documentation]             To open the record like Environment/User from the object main page
+    [Arguments]                 ${RECORD}
+    Search record on object main page                       ${RECORD}
+    ClickText                   ${RECORD}
+    Sleep                       2s                          #To load new record page
+
+Pull Changes
+    [Documentation]             To pull the metadatas based on the date and time provided
+    ...                         Author: Dhanesh
+    ...                         Date: 8th NOV 2021
+    ...                         Modified: 30th NOV 2021
+    [Arguments]                 ${DATE}                     ${TIME}
+    SetConfig                   PartialMatch                False
+    VerifyAll                   Pull Changes by Date, Get Metadata List, Files
+    SetConfig                   PartialMatch                True
+    TypeText                    Date                        ${DATE}
+    ClickText                   Time
+    TypeText                    Time                        ${TIME}
+    VerifyText                  Pull Changes
+    ClickElement                ${PULL_CHANGES_WEBELEMENT}
+    VerifyNoText                Loading
+
+MC Select Metadata
+    [Documentation]             To MC Select Metadata from the multicloud commit changes page
+    ...                         Author: Dhanesh
+    ...                         Date: 8th NOV 2021
+    [Arguments]                 ${METADATA}                 #Argument is of List type
+    ${LENGTH}=                  Get Length                  ${METADATA}
+    FOR                         ${I}                        IN RANGE                    0                           ${LENGTH}
+        ${EXPECTED}=            Get From List               ${METADATA}                 ${I}
+        ${SELECT_METADATA}=     Replace String              ${METADATA_CHECKBOX_WEBELEMENT}                         {METADATA}         ${EXPECTED}
+        SetConfig               PartialMatch                False
+        TypeText                Search                      ${EXPECTED}
+        PressKey                Search                      {ENTER}
+        SetConfig               PartialMatch                True
+        VerifyNoText            Loading
+        VerifyText              ${EXPECTED}
+        ClickElement            ${SELECT_METADATA}
+    END
+    VerifyNoText                Loading
+    VerifyElement               ${COMMIT_CHANGES_BUTTON_WEBELEMENT}
+    ClickElement                ${COMMIT_CHANGES_BUTTON_WEBELEMENT}
+    VerifyNoText                Loading
+    VerifyAll                   Commit Message, Re-create Feature Branch, Change Base Branch
+
+MC Commit Metadata
+    [Documentation]             To commit the selected metadata in MC commit page
+    ...                         Author : Dhanesh, 8th Nov, 2021
+    SetConfig                   PartialMatch                False
+    VerifyText                  Commit                      anchor=Cancel
+    ClickText                   Commit                      anchor=Cancel
+    SetConfig                   PartialMatch                True
+    VerifyNoText                Loading
+    VerifyText                  User Story Commit
