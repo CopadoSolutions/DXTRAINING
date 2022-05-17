@@ -27,6 +27,16 @@ ${JOB_RECORD_WEBELEMENT}        xpath\=(//span[text()\='In Progress']/ancestor::
 ${JOB_COMPLETED_WEBELEMENT}     xpath\=//strong[text()\='{JOB}']/ancestor::c-result-detail//div[@class\='info']/div[1]
 ${GIT_BRANCH_WEBELEMENT}        xpath\=//span[contains(@class,'field-label') and text()\='View in Git']/ancestor::flexipage-field//a
 
+${BROWSER}                      chrome
+${LOGIN_URL}                    https://login.salesforce.com/
+${MCDX_PIPELINE}                MCDX_Automation_Platform_Pipeline
+${MCDX_PROJECT}                 MC-DX-Automation_Platform
+${MCDX_DEV1_ORG}                mcdxautomationplatform_dev1
+${MCDX_DEV2_ORG}                mcdxautomationplatform_dev2
+${MCDX_INT_ORG}                 mcdxautomationplatform_int
+${MCDX_STAG_ORG}                mcdxautomationplatform_stg
+${MCDX_PROD_ORG}                QKQrMCqDsM@copa.do.sandbox
+
 *** Keywords ***
 Switch To Lightning
     [Documentation]             Switch to lightning if classic view opened
