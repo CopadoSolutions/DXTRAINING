@@ -253,7 +253,6 @@ Open component on Setup Home tab
 
 Update FLS To Custom Profile
     [Documentation]             To access profile and update object level security
-    ...                         Author: Ram Naidu - 26th Nov, 2021
     [Arguments]                 ${OBJECT}                   ${FIELD}                    ${PROFILE_NAME}
     Open Object on Developer ORG                            ${OBJECT}
     Search field inside Object                              ${FIELD}
