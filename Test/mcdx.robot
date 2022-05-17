@@ -30,19 +30,19 @@ Verify commit operation for Profiles and Fields
 
     #when
     Open Object                 User Stories
-    Open record from object main page                       ${US_ID1}
+    Open record from object main page                       ${US_ID}
     VerifyText                  Commit Changes
     ClickText                   Commit Changes
     ${CURRENT_DATE}=            Get Current Date            result_format=%d.%m.%Y
     Pull Changes                ${CURRENT_DATE}             00:00
-    ${METADATA}=                Create List                 ${FIELD}                  ${PROFILE_NAME}    ${CONTACT_OBJECT}
+    ${METADATA}=                Create List                 ${FIELD}                  ${PROFILE_NAME}
     MC Select Metadata          ${METADATA}
     MC Commit Metadata
 
     #Then
     Verify Commit Job Execution
     Open Object                 User Stories
-    Open record from object main page                       ${US_ID2}
+    Open record from object main page                       ${US_ID}
     ${FEATURE_BRANCH_NAME}=     Get Feature Branch Name
 
     #Then: Git assertion
