@@ -178,8 +178,7 @@ Commit Existing Metadata
     ${CURRENT_DATE}=            Get Current Date            result_format=%d.%m.%Y
     Pull Changes                ${CURRENT_DATE}             00:00
     ${METADATA}=                Create List                 pctxd_customlabel1
-    MC Select Metadata          ${METADATA}
-    MC Commit Metadata
+    Select Metadata with API Name And Commit                ${METADATA}                 FALSE
     Verify Commit Job Execution
     Open Object                 User Stories
     Open record from object main page                       ${US_ID1}
