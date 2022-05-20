@@ -167,6 +167,8 @@ DX Start Suite
     #Add Pipeline to the project
     Update Record Using Cli     copado__Project__c          a0z09000002zG3CAAU          copado__Deployment_Flow__c                              ${pipelineid}      ${ORG_USERNAME}
 
+
+*** Test Cases ***
 Commit Existing Metadata 
     [Documentation]             test
     Open Object                 User Stories
