@@ -34,6 +34,9 @@ ${PASSWORD_WEBELEMENT}                            xpath\=//input[@id\='password'
 ${EE_LOGINBUTTON_WEBELEMENT}                     xpath\=//input[@id\='Login']
 ${ALLOW_BUTTON_WEBELEMENT}                        xpath\=//input[@id\='oaapprove'] 
 ${SAVE_CREDENTIAL_WEBELEMENT}                     xpath\=//input[@id=\'thePage:theForm:pb_createOrg:co_pbb:bottom:cb_save']
+${FIRST_PROMOTION_INSIDE_US_WEBELEMENT}                 xpath\=(//lightning-primitive-cell-factory[@data-label\="Promotion Name"]/span/div)[1]
+${CREDENTIAL_VALUE_WEBELEMENT}                          xpath\=//span[text()\='Credential']/ancestor::record_flexipage-record-field//a//span
+${ENVIRONMENT_VALUE_WEBELEMENT}                         xpath\=//span[text()\='Environment']/ancestor::record_flexipage-record-field//a//span
 
 ${BROWSER}                      chrome
 ${LOGIN_URL}                    https://login.salesforce.com/
@@ -503,3 +506,40 @@ Update Credential Type And User
     ClickElement                ${SAVE_CREDENTIAL_WEBELEMENT}                           timeout=10s
     VerifyText                  Credentials validated
     Open Object                 Credentials
+
+Enable Promote and Deploy
+    [Documentation]             Enable "Promote and Deploy" for User Story
+    ClickText                   Deliver
+    ClickText                   Edit Promote and Deploy
+    ClickText                   Promote and Deploy
+    ClickText                   Save
+
+Open Promotion through User Story
+    [Documentation]             Open the Promotion available in user story and wait until the deployment creation
+    VerifyNoText                Loading
+    ClickText                   Plan
+    VerifyNoText                Loading
+    ClickText                   Deliver
+    ScrollText                  User Story Promotions
+    VerifyNoText                Loading
+    VerifyElement               ${FIRST_PROMOTION_INSIDE_US_WEBELEMENT}
+    ClickElement                ${FIRST_PROMOTION_INSIDE_US_WEBELEMENT}
+    VerifyText                  Promotion                   #To check promotion page loaded
+    ${PROGRESS_WINDOW}=         RunKeywordAndReturnStatus                               VerifyText                  Hide message                timeout=5s
+    Run Keyword If              ${PROGRESS_WINDOW}          ClickText                   Hide Message
+
+Verify MC User Story Promotion
+    [Documentation]             To verify the user story movement to next environment in user story Page
+    ...                         Author: Shweta B
+    ...                         Date: 9th November 2021
+    [Arguments]                 ${DESTINATION_ENVIRONMENT}
+    #To verify the source environment updated in the userstory page. UserStory must be loaded.
+    RefreshPage
+    VerifyAll                   Plan, Build, Test, Deliver, Related
+    ClickText                   Build
+    VerifyText                  Credential
+    ${CREDENTIAL_VALUE}=        GetText                     ${CREDENTIAL_VALUE_WEBELEMENT}
+    Should Be Equal             ${CREDENTIAL_VALUE}         ${DESTINATION_ENVIRONMENT}
+    VerifyText                  Environment
+    ${ENVIRONMENT_VALUE}=       GetText                     ${ENVIRONMENT_VALUE_WEBELEMENT}
+    Should Be Equal             ${ENVIRONMENT_VALUE}        ${DESTINATION_ENVIRONMENT}
