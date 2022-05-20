@@ -502,9 +502,6 @@ Update Credential Type And User
     ClickElement                ${ALLOW_BUTTON_WEBELEMENT}
     Sleep                       7s                          #To wait until Page is loaded
     RefreshPage
-    VerifyText                  Basic information
-    ClickElement                ${SAVE_CREDENTIAL_WEBELEMENT}                           timeout=10s
-    VerifyText                  Credentials validated
     Open Object                 Credentials
 
 Enable Promote and Deploy
