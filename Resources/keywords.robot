@@ -126,7 +126,7 @@ Create User Story
     ClickText                   New
     ${US_NAME}=                 Base method for User Story creation                     ${RECORD_TYPE}              ${PROJECT}                  ${CREDENTIAL}
     SetConfig                   PartialMatch                False
-    VerifyText                  Plan
+    VerifyText                  Plan                        anchor=Build                        timeout=10s
     VerifyText                  ${US_NAME}                  anchor=User Story Reference
     SetConfig                   PartialMatch                True
     ${US_ID}=                   GetText                     ${USID_WEBELEMENT}
