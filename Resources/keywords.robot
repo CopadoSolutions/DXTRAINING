@@ -543,3 +543,21 @@ Verify MC User Story Promotion
     VerifyText                  Environment
     ${ENVIRONMENT_VALUE}=       GetText                     ${ENVIRONMENT_VALUE_WEBELEMENT}
     Should Be Equal             ${ENVIRONMENT_VALUE}        ${DESTINATION_ENVIRONMENT}
+
+Verify Promote And Deploy Job Execution
+    [Documentation]             To verify the job execution is succesfully completed after promote and deploy
+    ...                         Author: Dhanesh
+    ...                         Date: 10th NOV 2021
+    ClickText                   Details
+    VerifyText                  Promotion Name              anchor=Information
+    VerifyText                  SFDX Promote
+    ${JOB_NAMES}=               Create List                 Promote                     Encode file names           Deploy
+    FOR                         ${I}                        IN RANGE                    0                           3
+        ${JOB}=                 Get From List               ${JOB_NAMES}                ${I}
+        ${COMPLETED_STATUS}=    Replace String              ${JOB_COMPLETED_WEBELEMENT}                             {JOB}                       ${JOB}
+        VerifyElementText       ${COMPLETED_STATUS}         Completed                   timeout=600s                reason=To wait until the job executions to get completed
+    END
+    VerifyText                  SFDX Deploy
+    VerifyText                  Step result:                anchor=Promote
+    VerifyText                  Step result:                anchor=Encode file names
+    VerifyText                  Step result:                anchor=Deploy
