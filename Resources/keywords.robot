@@ -7,6 +7,7 @@ Library                         Collections
 Library                         DateTime
 Library                         Github.py
 Library                         DeleteSFObject.py
+Library                         PackagesCli.py
 
 *** Variables ***
 ${APPS_WEBELEMENT}              xpath\=//h3[normalize-space()\='Apps']
@@ -381,3 +382,84 @@ Delete Source Org Object All Records
     ${ACCESS_TOKEN}=            Get Access Token            ${CONNECTION_RESPONSE}
     ${RES_JSON_LIST}=           Get Object List             ${ACCESS_TOKEN}             ${SOBJECT_API_NAME}         ${SOBJECT_FIELD_API_NAME}                               ${AUTOMATION_ORG_URL}
     Delete Automation Records                               ${RES_JSON_LIST}            ${SOBJECT_FIELD_API_NAME}                               ${ACCESS_TOKEN}             ${SOBJECT_API_NAME}    ${AUTOMATION_ORG_URL}    ${PREFIX_TEXT}
+
+
+
+CreateJsonInDirectory
+    [Documentation]             To create a json file inside the project Directory
+    ...                         Author: Dhanesh
+    ...                         Date: 17th FEB, 2022
+    [Arguments]                 ${VALUE}                    ${FILE_NAME}                ${PROJECT_NAME}             ${KEY}
+    #PROJECT_NAME: The name of the project created
+    #VALUE: The sfdxAuthUrl value
+    #FILE_NAME: The name of the json file which needs to be created
+    #KEY: The json key to create the json
+    ${PATH}=                    Set Variable                "/tmp/execution/${PROJECT_NAME}"
+    Create Auth Json            ${VALUE}                    ${FILE_NAME}                ${KEY}
+    ${DIRS}=                    Evaluate                    os.listdir(${PATH})
+    Log                         ${DIRS}                     console=true
+    Should Contain              ${DIRS}                     ${FILE_NAME}
+
+AuthorizeToOrg
+    [Documentation]             To authorize to any org using sfdxauthurl
+    ...                         Author: Dhanesh
+    ...                         Date: 14th FEB, 2022
+    [Arguments]                 ${PATH}
+    #PATH: Directory path of the json file created inside the project
+    ${OUTPUT}=                  Auth Orgs                   ${PATH}
+    Log                         ${OUTPUT}                   console=true
+    Should Contain              ${OUTPUT}                   Successfully authorized
+
+Clone Git Repo
+    [Documentation]             It will help to clone git on the docker environment
+    ...                         Author: Sachin Talwaria
+    ...                         Date: 24th March, 2022
+    [Arguments]                 ${CLONE_URL}
+    ${GIT_CLONE_STATUS}=        Evaluate                    os.system('git clone '+${CLONE_URL})
+    Log                         ${GIT_CLONE_STATUS}         console=true
+    ${DIRS}=                    Evaluate                    os.listdir(os.getcwd())
+    Log                         ${DIRS}                     console=true
+    ${GIT_CLONE_STATUS}=        Evaluate                    os.system('git status')
+    Log                         ${GIT_CLONE_STATUS}         console=true
+
+Clone Private Git Repo
+    [Arguments]    ${CLONE_URL}    ${USER_NAME}    ${PASSWORD}    
+    ${STATUS}=           Evaluate       os.system('git config --global user.email '+${USER_NAME})
+    Log                         ${STATUS}         console=true
+    ${STATUS}=                  Evaluate       os.system('git config --global user.password '+${PASSWORD})
+    Log                         ${STATUS}         console=true
+    ${GIT_CLONE_STATUS}=        Evaluate                    os.system('git clone '+${CLONE_URL})
+    Log                         ${GIT_CLONE_STATUS}         console=true
+    ${DIRS}=                    Evaluate                    os.listdir(os.getcwd())
+    Log                         ${DIRS}                     console=true
+    ${GIT_CLONE_STATUS}=        Evaluate                    os.system('git status')
+    Log                         ${GIT_CLONE_STATUS}         console=true
+
+Delete All File From Git Branch                        
+    [Arguments]    ${BRANCH_NAME}    ${MESSAGE}
+    ${GIT_CHECKOUT_STATUS}=     Evaluate       os.system('git checkout '+${BRANCH_NAME})
+    Log                         ${GIT_CHECKOUT_STATUS}         console=true
+    ${GIT_DELETE_STATUS}=     Evaluate       os.system('git rm -r *')
+    Log                         ${GIT_DELETE_STATUS}         console=true
+    ${GIT_ADD_STATUS}=     Evaluate       os.system('git add .')
+    Log                         ${GIT_ADD_STATUS}         console=true
+    ${GIT_COMMIT_STATUS}=     Evaluate       os.system('git commit -a -m ${MESSAGE}')
+    Log                         ${GIT_COMMIT_STATUS}         console=true
+    ${GIT_STATUS}=        Evaluate                    os.system('git status')
+    Log                         ${GIT_STATUS}         console=true
+    ${GIT_PUSH}=        Evaluate                    os.system('git push origin '+${BRANCH_NAME})
+    Log                         ${GIT_PUSH}         console=true
+
+Create New Directory
+    [Documentation]             It will help to create new folder on specific location
+    ...                         Author: Sachin Talwaria
+    ...                         Date: 24th March, 2022
+    [Arguments]                 ${PATH}                     ${DIR_NAME}
+    Evaluate                    os.chdir(${PATH})
+    ${PATH}=                    Evaluate                    os.path.join(${PATH}, ${DIR_NAME})
+    ${TEST}=                    Evaluate                    os.getcwd()
+    Log To Console              ${TEST}
+    Evaluate                    os.mkdir('${PATH}')
+    Evaluate                    os.chdir('${PATH}')
+    ${DIR}=                     Evaluate                    os.getcwd()
+    Log                         ${DIR}                      console=true
