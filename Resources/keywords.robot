@@ -29,6 +29,11 @@ ${METADATA_CHECKBOX_WEBELEMENT}                             xpath\=//lightning-b
 ${JOB_RECORD_WEBELEMENT}        xpath\=(//span[text()\='In Progress']/ancestor::tr//a[contains(text(),'JE')])[1]
 ${JOB_COMPLETED_WEBELEMENT}     xpath\=//strong[text()\='{JOB}']/ancestor::c-result-detail//div[@class\='info']/div[1]
 ${GIT_BRANCH_WEBELEMENT}        xpath\=//span[contains(@class,'field-label') and text()\='View in Git']/ancestor::flexipage-field//a
+${USERNAME_WEBELEMENT}                            xpath\=//input[@id\='username']
+${PASSWORD_WEBELEMENT}                            xpath\=//input[@id\='password']
+${EE_LOGINBUTTON_WEBELEMENT}                     xpath\=//input[@id\='Login']
+${ALLOW_BUTTON_WEBELEMENT}                        xpath\=//input[@id\='oaapprove'] 
+${SAVE_CREDENTIAL_WEBELEMENT}                     xpath\=//input[@id=\'thePage:theForm:pb_createOrg:co_pbb:bottom:cb_save']
 
 ${BROWSER}                      chrome
 ${LOGIN_URL}                    https://login.salesforce.com/
@@ -463,3 +468,38 @@ Create New Directory
     Evaluate                    os.chdir('${PATH}')
     ${DIR}=                     Evaluate                    os.getcwd()
     Log                         ${DIR}                      console=true
+
+Update Credential Type And User
+    [Documentation]             To get the context id from a credential
+    ...                         Author: Sachin
+    ...                         Date: 11th May 2022
+    [Arguments]                 ${CREDENTIAL}               ${USERNAME}                 ${PASSWORD}
+    Open Object                 Credentials
+    Run Keyword And Ignore Error                            ClickText                   Select List View
+    ${ISPRESENT}=               Run Keyword And Return Status                           VerifyText                All           timeout=5s
+    Run Keyword If              ${ISPRESENT}                ClickText                   All
+    Run Keyword And Ignore Error                            ClickText                   ALL Env                   timeout=2s
+    VerifyNoText                Loading
+    PressKey                    Search this list...         ${CREDENTIAL}
+    VerifyNoText                Loading
+    ClickElement                ${REFRESH_BUTTON_WEBELEMENT}
+    VerifyNoText                Loading
+    VerifyText                  ${CREDENTIAL}               anchor=Credential Name
+    ClickText                   ${CREDENTIAL}               anchor=Credential Name
+    ClickText                   Hide message                anchor=Loading
+    VerifyNoText                Loading
+    ClickText                   Authenticate                anchor=Delete
+    Sleep                       3s                          #Waiting for the login page
+    CloseWindow
+    SwitchWindow                NEW
+    TypeText                    ${USERNAME_WEBELEMENT}      ${USERNAME}
+    TypeText                    ${PASSWORD_WEBELEMENT}      ${PASSWORD}
+    ClickElement                ${EE_LOGINBUTTON_WEBELEMENT}                            timeout=5s
+    VerifyText                  Allow Access?
+    ClickElement                ${ALLOW_BUTTON_WEBELEMENT}
+    Sleep                       7s                          #To wait until Page is loaded
+    RefreshPage
+    VerifyText                  Basic information
+    ClickElement                ${SAVE_CREDENTIAL_WEBELEMENT}                           timeout=10s
+    VerifyText                  Credentials validated
+    Open Object                 Credentials
