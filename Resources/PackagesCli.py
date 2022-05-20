@@ -197,10 +197,13 @@ class PackagesCli():
 #Method to create a new salesforce scratch org
 #Author : Sachin; 24 March, 2022 
     @keyword
-    def create_scratch_org(self, scratch_org_name,config_path_name,dev_hub_name):
-        proc = subprocess.run('sfdx force:org:create -s -a '+scratch_org_name+' -f '+config_path_name+' -v '+dev_hub_name+' --nonamespace -w 10', stdout=subprocess.PIPE, shell=True)
+    def create_scratch_org(self, scratch_org_name,config_path_name,dev_hub_name,time_period):
+        proc = subprocess.run('sfdx force:org:create -s -a '+scratch_org_name+' -f '+config_path_name+' -v '+dev_hub_name+' --nonamespace -w 10 --durationdays '+time_period, stdout=subprocess.PIPE, shell=True)
         output = proc.stdout.decode('UTF-8')
-        return output
+        logger.info(output)
+        orgid=output.split("Successfully created scratch org: ")[1].split(",")[0].strip()
+        username=output.split("username: ")[1].strip()
+        return orgid+";"+username
 
 #Method to open newly created scratch org
 #Author : Sachin; 24 March, 2022 
@@ -216,7 +219,9 @@ class PackagesCli():
     def reset_org_password(self,scratch_org_name, devhub_org_name):
         proc = subprocess.run('sfdx force:user:password:generate -u '+scratch_org_name+' -v '+devhub_org_name, stdout=subprocess.PIPE, shell=True)
         output = proc.stdout.decode('UTF-8')
-        return output
+        logger.info(output)
+        password = output.split('"')[1].split('"')[0].strip()
+        return password
 
 #Method to push/deploy the metadata from the git repo
 #Author : Sachin; 24 March, 2022 
@@ -224,6 +229,7 @@ class PackagesCli():
     def push_metadata_from_git(self, scratch_org_name):
         proc = subprocess.run('sfdx force:source:push -u '+scratch_org_name, stdout=subprocess.PIPE, shell=True)
         output = proc.stdout.decode('UTF-8')
+        logger.info(output)
         return output
 
 #Method to get user details of the scratch org
@@ -232,13 +238,119 @@ class PackagesCli():
     def get_org_user_details(self, scratch_org_name, devhub_org_name):
         proc = subprocess.run('sfdx force:user:display -u '+scratch_org_name+' -v '+devhub_org_name, stdout=subprocess.PIPE, shell=True)
         output = proc.stdout.decode('UTF-8')
-        return output
+        logger.info(output)
+        instanceurl = output.split("Instance Url")[1].split("Login Url")[0].strip()
+        return instanceurl
 
 #Method to set default devhub
 #Author : Sachin; 24 March, 2022 
     @keyword
     def set_default_devhub(self, devhub_org):    
-        proc = subprocess.run('sfdx config:set defaultdevhubusername= '+devhub_org, stdout=subprocess.PIPE, shell=True)
+        proc = subprocess.run('sfdx config:set defaultdevhubusername='+devhub_org, stdout=subprocess.PIPE, shell=True)
         output = proc.stdout.decode('UTF-8')
-        return output  
+        return output
+
+#Method to set copado org
+#Author : Sachin; 22 April, 2022
+    @keyword
+    def set_copado_org(self, copado_org):
+        proc = subprocess.run('sfdx copado:auth:set --targetusername '+copado_org, stdout=subprocess.PIPE, shell=True)
+        output = proc.stdout.decode('UTF-8')
+        return output 
+
+#Method to create environment in copado org
+#Author : Sachin; 22 April, 2022
+    @keyword
+    def create_new_environment(self, environment_name, scratch_user_name):
+        proc = subprocess.run('sfdx copado:auth:grant --environmentname '+environment_name+' --targetusername '+scratch_user_name, stdout=subprocess.PIPE, shell=True)
+        output = proc.stdout.decode('UTF-8')
+        logger.info(output)
+        credential=output.split('Environment and related records created. ')[1].strip()
+        return credential
+
+#Method to get environment ID from copado org
+#Author : Sachin; 22 April, 2002
+    @keyword
+    def get_environmentid(self, credentialId,copado_org):
+        proc = subprocess.run('sfdx force:data:soql:query -q "SELECT copado__Environment__c FROM copado__Org__c WHERE  id =\''+credentialId+'\'" -u '+copado_org, stdout=subprocess.PIPE, shell=True)
+        output = proc.stdout.decode('UTF-8')
+        logger.info(output)
+        EnvId=output.split('──────────────────────')[1].split('Total')[0].strip()
+        return EnvId
         
+#Method to create pipeline in copado org
+#Author : Sachin; 22 April, 2022
+    @keyword
+    def create_new_pipeline(self, name, repositoryId, branch, platformName):
+        proc = subprocess.run('sfdx copado:pipeline:create  --name '+name+' --repository '+repositoryId+' --branch='+branch+' --platform '+platformName, stdout=subprocess.PIPE, shell=True)
+        output = proc.stdout.decode('UTF-8')
+        logger.info(output)
+        pipeline=output.split('sfdx copado:record:open -i ')[1].strip()
+        return pipeline
+
+#Method to create pipeline connection in copado org
+#Author : Sachin; 22 April, 2022
+    @keyword
+    def create_new_pipeline_connection(self, pipelineId, destinationenvId, sourceenvId, sourcebranch, destinationbranch):
+        child = pexpect.spawn('sfdx copado:pipeline:connection:create --pipeline '+pipelineId+' --destinationenvironment '+destinationenvId+' --sourceenvironment '+sourceenvId+' --sourcebranch='+sourcebranch+'  --destinationbranch='+destinationbranch, timeout=10)
+        child.expect("Fetching environments...")
+        child.sendline("\n")
+        child.expect(pexpect.EOF)
+        output = child.before.decode("utf-8")
+        logger.info(output)
+        pipelineconn=output.split('sfdx copado:record:open -i ')[1][:19].strip()
+        return pipelineconn
+
+#Method to update the field
+#Author : Sachin; 22nApril, 2022
+    @keyword
+    def update_record_using_cli(self, sobject, recordId, sfield, svalue, user):
+        proc = subprocess.run('sfdx force:data:record:update -s '+sobject+' -i '+recordId+' -v \"'+sfield+'=\''+svalue+'\'\" -u '+user, stdout=subprocess.PIPE, shell=True)
+        output = proc.stdout.decode('UTF-8')
+        logger.info(output)
+
+#Method to add Ip ranges
+#Author : Sachin; 11th May, 2022
+    @keyword
+    def update_user_ip_ranges(self, username, iprange):
+        proc = subprocess.run('sfdx sfpowerkit:org:relaxiprange -u '+username+' -r '+iprange, stdout=subprocess.PIPE, shell=True)
+        output = proc.stdout.decode('UTF-8')
+        logger.info(output)
+
+#Method to delete record
+#Author : Sachin; 11th May, 2022
+    @keyword
+    def delete_record_using_cli(self, sobject, sId, user):
+        proc = subprocess.run('sfdx force:data:record:delete -s  '+sobject+' -i '+sId+' -u '+user, stdout=subprocess.PIPE, shell=True)                                           
+        output = proc.stdout.decode('UTF-8')
+        logger.info(output)
+
+#Method to delete org
+#Author : Sachin; 11th may, 2022
+    @keyword
+    def delete_org_using_cli(self, user, devhubusername):
+        child = pexpect.spawn('sfdx force:org:delete -u '+user+' -v '+devhubusername, timeout=10)
+        child.sendline("y")
+        child.expect(pexpect.EOF)
+        output = child.before.decode("utf-8")
+        logger.info(output)
+
+#Method to get scratch org
+#Author : Sachin; 11th may, 2022
+    @keyword
+    def get_scratch_org_auth_url(self, user):
+        proc = subprocess.run('sfdx force:org:display -u '+user+' --verbose', stdout=subprocess.PIPE, shell=True)
+        output = proc.stdout.decode('UTF-8')
+        logger.info(output)
+        scratchauthurl=output.split('Sfdx Auth Url    ')[1].split('Status')[0].strip()
+        return scratchauthurl
+
+#Method to run SOQL query
+#Author : Sachin; 11th may, 2022
+    @keyword
+    def run_soql_query(self, query, copado_org):
+        proc = subprocess.run('sfdx force:data:soql:query -q '+query+' -u '+copado_org, stdout=subprocess.PIPE, shell=True)
+        output = proc.stdout.decode('UTF-8')
+        logger.info(output)
+        result=output.split('──────────────────')[1].split('Total')[0].strip()
+        return result
