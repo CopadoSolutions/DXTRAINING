@@ -1,0 +1,20 @@
+apt-get install build-essential procps curl file git
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+echo eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
+wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
+mkdir ~/sfdx
+tar xJf sfdx-linux-x64.tar.xz -C ~/sfdx --strip-components 1
+export PATH=~/sfdx/bin:$PATH
+PATH=~/sfdx/bin:$PATH
+~/sfdx/bin/sfdx --version
+brew --version
+heroku --version
+echo 'y' | ~/sfdx/bin/sfdx plugins:install @copado/copado-cli
+echo 'y' | ~/sfdx/bin/sfdx plugins:install sfpowerkit
+~/sfdx/bin/sfdx sfpowerkit --version
+
+python -m pip install robotframework-imaplibrary2
+pip install robotframework-seleniumlibrary==3.141.0
+pip3 install pexpect
