@@ -8,7 +8,7 @@ Suite Teardown              DX End Suite
 *** Variables ***
 ${DEVHUB_JSON_NAME}         DXCoreDevHubAuth.json
 ${AUTOORG_JSON_NAME}        AutoOrgAuth.json
-${SFDX_PROJECT_NAME}        Qentinel/Metadata repo/DXCoreDataCenter
+${SFDX_PROJECT_NAME}        DXTRAINING/Metadata repo/DXCoreDataCenter
 ${KEY}                      sfdxAuthUrl
 ${DXCOREDEVHUB_ORG_USERNAME}                            dxcoredevhub@copado.com
 ${DXCORE_DEVHUB_AUTH_URL}                               force://PlatformCLI::5Aep861ryecz0qkv5wxPxGbVKDh5oKqXoBK21RGmFRDVSihPFVcdnxZ4hWeklhKUp0EXVY4AHLikf70bKPmidb9@copado-58d-dev-ed.my.salesforce.com
@@ -18,17 +18,17 @@ ${PLATFORM_AUTH_URL}        force://PlatformCLI::5Aep861R85s7ZWXls06hv9Iir12HPyb
 
 DX End Suite
     #Empty the repo
-    Create New Directory        "/tmp/execution/Qentinel"                               "Pipeline repo"
-    Evaluate                    os.chdir('/tmp/execution/Qentinel/Pipeline repo')
+    Create New Directory        "/tmp/execution/DXTRAINING"                               "Pipeline repo"
+    Evaluate                    os.chdir('/tmp/execution/DXTRAINING/Pipeline repo')
     Clone Private Git Repo      "https://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@github.com/stalwaria/STMCDXautomationrepo.git"                "stalwaria@copado.com"     "Parveen_2022"
     ${DIRS}=                    Evaluate                    os.listdir(os.getcwd())
     Log                         ${DIRS}                     console=true
-    Evaluate                    os.chdir('/tmp/execution/Qentinel/Pipeline repo/STMCDXautomationrepo')
+    Evaluate                    os.chdir('/tmp/execution/DXTRAINING/Pipeline repo/STMCDXautomationrepo')
     Delete All File From Git Branch                         "main"                      "Delete all stuff"
     Delete All File From Git Branch                         "dev1"                      "Delete all stuff"
 
     #Authentication
-    Evaluate                    os.chdir('/tmp/execution/Qentinel/Metadata repo/DXCoreDataCenter')
+    Evaluate                    os.chdir('/tmp/execution/DXTRAINING/Metadata repo/DXCoreDataCenter')
     CreateJsonInDirectory       ${DXCORE_DEVHUB_AUTH_URL}          ${DEVHUB_JSON_NAME}         ${SFDX_PROJECT_NAME}        ${KEY}
     CreateJsonInDirectory       ${PLATFORM_AUTH_URL}        ${AUTOORG_JSON_NAME}        ${SFDX_PROJECT_NAME}        ${KEY}
     AuthorizeToOrg              ${DEVHUB_JSON_NAME}
@@ -63,7 +63,7 @@ DX End Suite
     Delete Org Using Cli        ${scratchoneusername}       ${DXCOREDEVHUB_ORG_USERNAME}
     Delete Org Using Cli        ${scratchtwousername}       ${DXCOREDEVHUB_ORG_USERNAME}
 
-    Evaluate                    os.chdir('/tmp/execution/Qentinel')
+    Evaluate                    os.chdir('/tmp/execution/DXTRAINING')
     ${DIRS}=                    Evaluate                    os.listdir(os.getcwd())
     Log                         ${DIRS}                     console=true
 
@@ -86,9 +86,9 @@ DX Start Suite
     ClickText                   Log In
 
     #Repo Clone
-    Create New Directory        "/tmp/execution/Qentinel"                               "Metadata repo"
+    Create New Directory        "/tmp/execution/DXTRAINING"                               "Metadata repo"
     Clone Git Repo              "https://github.com/stalwaria/DXCoreDataCenter.git"
-    Evaluate                    os.chdir('/tmp/execution/Qentinel/Metadata repo/DXCoreDataCenter')
+    Evaluate                    os.chdir('/tmp/execution/DXTRAINING/Metadata repo/DXCoreDataCenter')
     ${DIRS}=                    Evaluate                    os.listdir(os.getcwd())
     Log                         ${DIRS}                     console=true
 
@@ -102,7 +102,7 @@ DX Start Suite
     #DX setup
     #Scratch Org 1
     ${ORG_NAME}                 Set Variable                AutosrcEnv
-    ${OUTPUT}=                  Create Scratch Org          ${ORG_NAME}                 "/tmp/execution/Qentinel/Metadata repo/DXCoreDataCenter/config/ctx2-dev-scratch.json"    ${DXCOREDEVHUB_ORG_USERNAME}    1
+    ${OUTPUT}=                  Create Scratch Org          ${ORG_NAME}                 "/tmp/execution/DXTRAINING/Metadata repo/DXCoreDataCenter/config/ctx2-dev-scratch.json"    ${DXCOREDEVHUB_ORG_USERNAME}    1
     ${ORG_DETAILS}=             String.Split String         ${OUTPUT}                   ;
     Set Suite variable          ${scratchoneorgid}          ${ORG_DETAILS}[0]
     Set Suite variable          ${scratchoneusername}       ${ORG_DETAILS}[1]
@@ -126,7 +126,7 @@ DX Start Suite
 
     #Scratch Org 2
     ${ORG_NAME}                 Set Variable                AutodestEnv
-    ${OUTPUT}=                  Create Scratch Org          ${ORG_NAME}                 "/tmp/execution/Qentinel/Metadata repo/DXCoreDataCenter/config/ctx2-dev-scratch.json"    ${DXCOREDEVHUB_ORG_USERNAME}    1
+    ${OUTPUT}=                  Create Scratch Org          ${ORG_NAME}                 "/tmp/execution/DXTRAINING/Metadata repo/DXCoreDataCenter/config/ctx2-dev-scratch.json"    ${DXCOREDEVHUB_ORG_USERNAME}    1
     ${ORG_DETAILS}=             String.Split String         ${OUTPUT}                   ;
     Set Suite variable          ${scratchtwoorgid}          ${ORG_DETAILS}[0]
     Set Suite variable          ${scratchtwousername}       ${ORG_DETAILS}[1]
