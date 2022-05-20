@@ -37,6 +37,7 @@ ${SAVE_CREDENTIAL_WEBELEMENT}                     xpath\=//input[@id=\'thePage:t
 ${FIRST_PROMOTION_INSIDE_US_WEBELEMENT}                 xpath\=(//lightning-primitive-cell-factory[@data-label\="Promotion Name"]/span/div)[1]
 ${CREDENTIAL_VALUE_WEBELEMENT}                          xpath\=//span[text()\='Credential']/ancestor::record_flexipage-record-field//a//span
 ${ENVIRONMENT_VALUE_WEBELEMENT}                         xpath\=//span[text()\='Environment']/ancestor::record_flexipage-record-field//a//span
+${METADATAAPI_CHECKBOX_WEBELEMENT}      xpath\=//lightning-base-formatted-text[text()\='{METADATA}']/ancestor::tr//input[@type\='checkbox']/parent::span/parent::lightning-primitive-cell-checkbox
 
 ${BROWSER}                      chrome
 ${LOGIN_URL}                    https://login.salesforce.com/
@@ -558,3 +559,35 @@ Verify Promote And Deploy Job Execution
     VerifyText                  Step result:                anchor=Promote
     VerifyText                  Step result:                anchor=Encode file names
     VerifyText                  Step result:                anchor=Deploy
+
+Select Metadata with API Name And Commit
+    [Documentation]         To select metadata with API Name and commit in the multicloud commit changes page
+    ...                     Author: Sachin Talwaria
+    ...                     Modified Date: 22nd FEB, 2022
+    [Arguments]             ${METADATA}    ${RECREATE_FEATURE_BRANCH}                 #Input the exact field name as displayed in commit page[Along with the API Name] & Re-create variable will mark chekbox as yes (i.e. true) or no (i.e. false) 
+    ${LENGTH}=              Get Length                  ${METADATA}
+    FOR                     ${I}                        IN RANGE                    0                          ${LENGTH}
+        ${EXPECTED}=        Get From List               ${METADATA}                 ${I}
+        ${SELECT_METADATA}=                             Replace String              ${METADATAAPI_CHECKBOX_WEBELEMENT}             {METADATA}    ${EXPECTED}
+        SetConfig           PartialMatch                False
+        TypeText            Search                      ${EXPECTED}
+        PressKey            Search                      {ENTER}
+        SetConfig           PartialMatch                True
+        VerifyNoText        Loading
+        VerifyText          ${EXPECTED}
+        ClickElement        ${SELECT_METADATA}
+    END
+    VerifyNoText            Loading
+    VerifyElement           ${COMMIT_CHANGES_BUTTON_WEBELEMENT}
+    ClickElement            ${COMMIT_CHANGES_BUTTON_WEBELEMENT}
+    VerifyNoText            Loading
+    VerifyAll               Commit Message, Re-create Feature Branch, Change Base Branch
+    IF                     "${RECREATE_FEATURE_BRANCH}" == "TRUE"
+        ClickCheckbox       Re-create Feature Branch    on
+    END
+    SetConfig               PartialMatch                False
+    VerifyText              Commit                      anchor=Cancel
+    ClickText               Commit                      anchor=Cancel
+    SetConfig               PartialMatch                True
+    VerifyNoText            Loading
+    VerifyText              User Story Commit
