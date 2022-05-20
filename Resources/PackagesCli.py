@@ -1,9 +1,11 @@
 from requests.api import head
+from robot.api import logger
 from robot.api.deco import keyword
 import string
 import json
 import subprocess
 import os
+import pexpect
 
 class PackagesCli():
 
