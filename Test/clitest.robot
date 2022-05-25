@@ -1,25 +1,25 @@
 *** Settings ***
-Documentation               Test cases related to multicloud back promotion
-Resource                    ../Resources/keywords.robot
-Suite Setup                 DX Start Suite
-Suite Teardown              DX End Suite
+Documentation                   Test cases related to multicloud back promotion
+Resource                        ../Resources/keywords.robot
+Suite Setup                     DX Start Suite
+Suite Teardown                  DX End Suite
 
 
 *** Variables ***
-${DEVHUB_JSON_NAME}         DXCoreDevHubAuth.json
-${AUTOORG_JSON_NAME}        AutoOrgAuth.json
-${SFDX_PROJECT_NAME}        DXTRAINING/Metadata repo/DXCoreDataCenter
-${KEY}                      sfdxAuthUrl
-${DXCOREDEVHUB_ORG_USERNAME}                            sfdxdevhub@copado.com
-${DXCORE_DEVHUB_AUTH_URL}                               force://PlatformCLI::5Aep861ryecz0qkv5ydOzuaLpUkuOa1pnVRBIRvFrTkZ.lUPdj8UDFGWgEhoSKETi2uqIcrhSGoVxzWZExTov25@copado-3b-dev-ed.my.salesforce.com
-${PLATFORM_AUTH_URL}        force://PlatformCLI::5Aep861R85s7ZWXls06hv9Iir12HPyb9lZWjHcGc3uRV2Dt6_VHjCOAAYgC9KQquuErWxroD98AOog4LM5hfxhA@copado-19e-dev-ed.my.salesforce.com
+${DEVHUB_JSON_NAME}             DXCoreDevHubAuth.json
+${AUTOORG_JSON_NAME}            AutoOrgAuth.json
+${SFDX_PROJECT_NAME}            DXTRAINING/Metadata repo/DXCoreDataCenter
+${KEY}                          sfdxAuthUrl
+${DXCOREDEVHUB_ORG_USERNAME}    sfdxdevhub@copado.com
+${DXCORE_DEVHUB_AUTH_URL}       force://PlatformCLI::5Aep861ryecz0qkv5ydOzuaLpUkuOa1pnVRBIRvFrTkZ.lUPdj8UDFGWgEhoSKETi2uqIcrhSGoVxzWZExTov25@copado-3b-dev-ed.my.salesforce.com
+${PLATFORM_AUTH_URL}            force://PlatformCLI::5Aep861R85s7ZWXls06hv9Iir12HPyb9lZWjHcGc3uRV2Dt6_VHjCOAAYgC9KQquuErWxroD98AOog4LM5hfxhA@copado-19e-dev-ed.my.salesforce.com
 
 *** Keywords ***
 
 DX End Suite
     #Authentication
     Evaluate                    os.chdir('/tmp/execution/DXTRAINING/Metadata repo/DXCoreDataCenter')
-    CreateJsonInDirectory       ${DXCORE_DEVHUB_AUTH_URL}          ${DEVHUB_JSON_NAME}         ${SFDX_PROJECT_NAME}        ${KEY}
+    CreateJsonInDirectory       ${DXCORE_DEVHUB_AUTH_URL}                               ${DEVHUB_JSON_NAME}         ${SFDX_PROJECT_NAME}        ${KEY}
     CreateJsonInDirectory       ${PLATFORM_AUTH_URL}        ${AUTOORG_JSON_NAME}        ${SFDX_PROJECT_NAME}        ${KEY}
     AuthorizeToOrg              ${DEVHUB_JSON_NAME}
     AuthorizeToOrg              ${AUTOORG_JSON_NAME}
@@ -34,7 +34,7 @@ DX End Suite
     #Get promotion and destination org ID
     ${OUTPUT}=                  Run Soql Query              "SELECT Id FROM copado__Destination_Org__c WHERE copado__To_Org_Name__c='AutodestEnv' or copado__To_Org_Name__c='AutosrcEnv'"    ${ORG_USERNAME}
     Delete Record Using Cli     copado__Destination_Org__c                              ${OUTPUT}                   ${ORG_USERNAME}
-    ${OUTPUT}=                  Run Soql Query              "SELECT Id FROM copado__Promotion__c WHERE copado__Project__c='a0z09000002zG3CAAU'"        ${ORG_USERNAME}
+    ${OUTPUT}=                  Run Soql Query              "SELECT Id FROM copado__Promotion__c WHERE copado__Project__c='a0z09000002zG3CAAU'"                    ${ORG_USERNAME}
     Delete Record Using Cli     copado__Promotion__c        ${OUTPUT}                   ${ORG_USERNAME}
 
     #Delete the credential
@@ -74,9 +74,9 @@ DX Start Suite
     TypeText                    Username                    ${ORG_USERNAME}
     TypeSecret                  Password                    ${ORG_PASSWORD}
     ClickText                   Log In
-    
+
     #Empty the repo
-    Create New Directory        "/tmp/execution/DXTRAINING"                               "Pipeline repo"
+    Create New Directory        "/tmp/execution/DXTRAINING"                             "Pipeline repo"
     Evaluate                    os.chdir('/tmp/execution/DXTRAINING/Pipeline repo')
     Clone Private Git Repo      "https://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@github.com/stalwaria/STMCDXautomationrepo.git"                "stalwaria@copado.com"     "Parveen_2022"
     ${DIRS}=                    Evaluate                    os.listdir(os.getcwd())
@@ -86,14 +86,15 @@ DX Start Suite
     Delete All File From Git Branch                         "dev1"                      "Delete all stuff"
 
     #Repo Clone
-    Create New Directory        "/tmp/execution/DXTRAINING"                               "Metadata repo"
+    Evaluate                    os.chdir('/tmp/execution/DXTRAINING')
+    Create New Directory        "/tmp/execution/DXTRAINING"                             "Metadata repo"
     Clone Git Repo              "https://github.com/stalwaria/DXCoreDataCenter.git"
     Evaluate                    os.chdir('/tmp/execution/DXTRAINING/Metadata repo/DXCoreDataCenter')
     ${DIRS}=                    Evaluate                    os.listdir(os.getcwd())
     Log                         ${DIRS}                     console=true
 
     #Authentication
-    CreateJsonInDirectory       ${DXCORE_DEVHUB_AUTH_URL}          ${DEVHUB_JSON_NAME}         ${SFDX_PROJECT_NAME}        ${KEY}
+    CreateJsonInDirectory       ${DXCORE_DEVHUB_AUTH_URL}                               ${DEVHUB_JSON_NAME}         ${SFDX_PROJECT_NAME}        ${KEY}
     CreateJsonInDirectory       ${PLATFORM_AUTH_URL}        ${AUTOORG_JSON_NAME}        ${SFDX_PROJECT_NAME}        ${KEY}
     AuthorizeToOrg              ${DEVHUB_JSON_NAME}
     AuthorizeToOrg              ${AUTOORG_JSON_NAME}
