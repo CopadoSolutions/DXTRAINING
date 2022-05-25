@@ -17,16 +17,6 @@ ${PLATFORM_AUTH_URL}        force://PlatformCLI::5Aep861R85s7ZWXls06hv9Iir12HPyb
 *** Keywords ***
 
 DX End Suite
-    #Empty the repo
-    Create New Directory        "/tmp/execution/DXTRAINING"                               "Pipeline repo"
-    Evaluate                    os.chdir('/tmp/execution/DXTRAINING/Pipeline repo')
-    Clone Private Git Repo      "https://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@github.com/stalwaria/STMCDXautomationrepo.git"                "stalwaria@copado.com"     "Parveen_2022"
-    ${DIRS}=                    Evaluate                    os.listdir(os.getcwd())
-    Log                         ${DIRS}                     console=true
-    Evaluate                    os.chdir('/tmp/execution/DXTRAINING/Pipeline repo/STMCDXautomationrepo')
-    Delete All File From Git Branch                         "main"                      "Delete all stuff"
-    Delete All File From Git Branch                         "dev1"                      "Delete all stuff"
-
     #Authentication
     Evaluate                    os.chdir('/tmp/execution/DXTRAINING/Metadata repo/DXCoreDataCenter')
     CreateJsonInDirectory       ${DXCORE_DEVHUB_AUTH_URL}          ${DEVHUB_JSON_NAME}         ${SFDX_PROJECT_NAME}        ${KEY}
@@ -84,6 +74,16 @@ DX Start Suite
     TypeText                    Username                    ${ORG_USERNAME}
     TypeSecret                  Password                    ${ORG_PASSWORD}
     ClickText                   Log In
+    
+    #Empty the repo
+    Create New Directory        "/tmp/execution/DXTRAINING"                               "Pipeline repo"
+    Evaluate                    os.chdir('/tmp/execution/DXTRAINING/Pipeline repo')
+    Clone Private Git Repo      "https://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@github.com/stalwaria/STMCDXautomationrepo.git"                "stalwaria@copado.com"     "Parveen_2022"
+    ${DIRS}=                    Evaluate                    os.listdir(os.getcwd())
+    Log                         ${DIRS}                     console=true
+    Evaluate                    os.chdir('/tmp/execution/DXTRAINING/Pipeline repo/STMCDXautomationrepo')
+    Delete All File From Git Branch                         "main"                      "Delete all stuff"
+    Delete All File From Git Branch                         "dev1"                      "Delete all stuff"
 
     #Repo Clone
     Create New Directory        "/tmp/execution/DXTRAINING"                               "Metadata repo"
