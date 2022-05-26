@@ -10,8 +10,8 @@ ${DEVHUB_JSON_NAME}             DXCoreDevHubAuth.json
 ${AUTOORG_JSON_NAME}            AutoOrgAuth.json
 ${SFDX_PROJECT_NAME}            DXTRAINING/Metadata repo/DXCoreDataCenter
 ${KEY}                          sfdxAuthUrl
-${DXCOREDEVHUB_ORG_USERNAME}    sgdevhub@copado.com
-${DXCORE_DEVHUB_AUTH_URL}       force://PlatformCLI::5Aep861ryecz0qkv5x1T1wmvGPVJu3aNLZDY_vrLYFRl5PUSwY5p2Df9xt1daxMHmtwgzwUrbc3xxPTVg3qvvOV@copado-5e1-dev-ed.my.salesforce.com
+${DXCOREDEVHUB_ORG_USERNAME}    devhub_automation@copado.com    #sgdevhub@copado.com
+${DXCORE_DEVHUB_AUTH_URL}       force://PlatformCLI::5Aep861mdLLi91HqFcHZFTlvZKcYoXVHVWA816nz2ZJ43hx8RzRIV8IqR5qvtMMgKxf3qLfjNPWEpCSwjv6W1fu@copado-c-dev-ed.my.salesforce.com
 ${PLATFORM_AUTH_URL}            force://PlatformCLI::5Aep861ryecz0qkv5zpJzdOKjyCDhgU7x_sGpx2qF_pEJuYd_iigSdbO90h.DPk0b1Nkb6yg1TwDTuTd6vIGo3X@copado-b6.my.salesforce.com
 
 *** Keywords ***
