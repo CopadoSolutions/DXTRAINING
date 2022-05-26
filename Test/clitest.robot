@@ -151,15 +151,15 @@ DX Start Suite
 
     #Pipeline Creation
     ${PIPELINE_NAME}            Set Variable                SFDX_Pipeline
-    ${OUTPUT}                   Create New Pipeline         ${PIPELINE_NAME}            a0p09000001839RAAQ          main                        SFDX
+    ${OUTPUT}                   Create New Pipeline         ${PIPELINE_NAME}            a0q5i000000ggv2AAA          main                        SFDX
     Set Suite variable          ${pipelineid}               ${OUTPUT}
 
     #Pipeline Connection
     ${OUTPUT}                   Create New Pipeline Connection                          ${pipelineid}               ${environmentprodid}        ${environmentdevoneid}     dev1    main
     Set Suite variable          ${pipelineconnectionid}     ${OUTPUT}
-    Update Record Using Cli     copado__Deployment_Flow__c                              ${pipelineid}               copado__CommitJobTemplate__c                   a2009000000arEKAAY    ${ORG_USERNAME}
-    Update Record Using Cli     copado__Deployment_Flow__c                              ${pipelineid}               copado__Promotion_Job_Template__c              a2009000000arEMAAY    ${ORG_USERNAME}
-    Update Record Using Cli     copado__Deployment_Flow__c                              ${pipelineid}               copado__Deployment_Job_Template__c             a2009000000arELAAY    ${ORG_USERNAME}
+    Update Record Using Cli     copado__Deployment_Flow__c                              ${pipelineid}               copado__CommitJobTemplate__c                   a0u5i000000ygyaAAA    ${ORG_USERNAME}
+    Update Record Using Cli     copado__Deployment_Flow__c                              ${pipelineid}               copado__Promotion_Job_Template__c              a0u5i000000ygycAAA    ${ORG_USERNAME}
+    Update Record Using Cli     copado__Deployment_Flow__c                              ${pipelineid}               copado__Deployment_Job_Template__c             a0u5i000000ygybAAA    ${ORG_USERNAME}
 
 
     #Pipeline connection update
@@ -167,7 +167,7 @@ DX Start Suite
     Update Record Using Cli     copado__Deployment_Flow_Step__c                         ${pipelineconnectionid}     copado__Destination_Environment__c             ${environmentprodid}    ${ORG_USERNAME}
 
     #Add Pipeline to the project
-    Update Record Using Cli     copado__Project__c          a0z09000002zG3CAAU          copado__Deployment_Flow__c                              ${pipelineid}      ${ORG_USERNAME}
+    Update Record Using Cli     copado__Project__c          a155i000000kjCkAAI          copado__Deployment_Flow__c                              ${pipelineid}      ${ORG_USERNAME}
 
 
 *** Test Cases ***
