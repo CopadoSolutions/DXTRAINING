@@ -586,8 +586,8 @@ Select Metadata with API Name And Commit
         ClickCheckbox       Re-create Feature Branch    on
     END
     SetConfig               PartialMatch                False
-    VerifyText              Commit                      anchor=Cancel                        timeout=10s
-    ClickText               Commit                      anchor=Cancel                        timeout=10s
+    VerifyText              Commit                      anchor=Change Base Branch                        timeout=10s
+    ClickText               Commit                      anchor=Change Base Branch                        timeout=10s
     SetConfig               PartialMatch                True
     VerifyNoText            Loading
     VerifyText              User Story Commit
