@@ -197,7 +197,7 @@ Test Live
     #Empty the repo
     Create New Directory        "/tmp/execution/DXTRAINING"                             "Pipeline repo"
     Evaluate                    os.chdir('/tmp/execution/DXTRAINING/Pipeline repo')
-    Clone Private Git Repo      "https://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@github.com/stalwaria/STMCDXautomationrepo.git"                "stalwaria@copado.com"     "Parveen_2022"
+    Clone Private Git Repo      "https://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@github.com/stalwaria/STMCDXautomationrepo.git"                "stalwaria@copado.com"     "Parveen_2022"
     ${DIRS}=                    Evaluate                    os.listdir(os.getcwd())
     Log                         ${DIRS}                     console=true
     Evaluate                    os.chdir('/tmp/execution/DXTRAINING/Pipeline repo/STMCDXautomationrepo')
