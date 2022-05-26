@@ -1,9 +1,0 @@
-mkdir ~/sfdx
-tar xJf sfdx-linux-x64.tar.xz -C ~/sfdx --strip-components 1
-export PATH=~/sfdx/bin:$PATH
-PATH=~/sfdx/bin:$PATH
-~/sfdx/bin/sfdx --version
-echo 'y' | ~/sfdx/bin/sfdx plugins:install @copado/copado-cli
-echo 'y' | ~/sfdx/bin/sfdx plugins:install sfpowerkit
-~/sfdx/bin/sfdx sfpowerkit --version
-pip3 install pexpect
