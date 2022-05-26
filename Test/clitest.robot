@@ -21,7 +21,7 @@ DX End Suite
     #Empty the repo
     Create New Directory        "/tmp/execution/DXTRAINING"                             "Pipeline repo"
     Evaluate                    os.chdir('/tmp/execution/DXTRAINING/Pipeline repo')
-    Clone Private Git Repo      "https://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@github.com/stalwaria/STMCDXautomationrepo.git"                "stalwaria@copado.com"     "Parveen_2022"
+    Clone Private Git Repo      "https://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@github.com/stalwaria/STMCDXautomationrepo.git"                "stalwaria@copado.com"     "Parveen_2022"
     ${DIRS}=                    Evaluate                    os.listdir(os.getcwd())
     Log                         ${DIRS}                     console=true
     Evaluate                    os.chdir('/tmp/execution/DXTRAINING/Pipeline repo/STMCDXautomationrepo')
