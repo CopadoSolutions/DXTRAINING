@@ -432,7 +432,9 @@ Clone Git Repo
     Log                         ${GIT_CLONE_STATUS}         console=true
 
 Clone Private Git Repo
-    [Arguments]    ${CLONE_URL}    ${USER_NAME}    ${PASSWORD}    
+    [Arguments]    ${CLONE_URL}    ${USER_NAME}    ${PASSWORD} 
+    ${STATUS}=           Evaluate       os.system('git config --global --unset-all user.name')
+    ${STATUS}=           Evaluate       os.system('git config --global --unset-all user.password')   
     ${STATUS}=           Evaluate       os.system('git config --global user.email stalwaria@copado.com')
     Log                         ${STATUS}         console=true
     ${STATUS}=                  Evaluate       os.system('git config --global user.password Parveen_2022')
