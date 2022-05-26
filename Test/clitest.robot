@@ -1,8 +1,8 @@
 *** Settings ***
 Documentation                   Test cases related to multicloud back promotion
 Resource                        ../Resources/keywords.robot
-Suite Setup                     DX Start Suite
-Suite Teardown                  DX End Suite
+#Suite Setup                     DX Start Suite
+#Suite Teardown                  DX End Suite
 
 
 *** Variables ***
