@@ -433,9 +433,9 @@ Clone Git Repo
 
 Clone Private Git Repo
     [Arguments]    ${CLONE_URL}    ${USER_NAME}    ${PASSWORD}    
-    ${STATUS}=           Evaluate       os.system('git config --global user.email '+${USER_NAME})
+    ${STATUS}=           Evaluate       os.system('git config --global user.email /''+${USER_NAME}+'/'')
     Log                         ${STATUS}         console=true
-    ${STATUS}=                  Evaluate       os.system('git config --global user.password '+${PASSWORD})
+    ${STATUS}=                  Evaluate       os.system('git config --global user.password /''+${PASSWORD}+'/'')
     Log                         ${STATUS}         console=true
     ${GIT_CLONE_STATUS}=        Evaluate                    os.system('git clone '+${CLONE_URL})
     Log                         ${GIT_CLONE_STATUS}         console=true
