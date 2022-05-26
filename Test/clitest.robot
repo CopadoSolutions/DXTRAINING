@@ -12,7 +12,7 @@ ${SFDX_PROJECT_NAME}            DXTRAINING/Metadata repo/DXCoreDataCenter
 ${KEY}                          sfdxAuthUrl
 ${DXCOREDEVHUB_ORG_USERNAME}    dxcoredevhub@copado.com
 ${DXCORE_DEVHUB_AUTH_URL}       force://PlatformCLI::5Aep861ryecz0qkv5wxPxGbVKDh5oKqXoBK21RGmFRDVSihPFVcdnxZ4hWeklhKUp0EXVY4AHLikf70bKPmidb9@copado-58d-dev-ed.my.salesforce.com
-${PLATFORM_AUTH_URL}            force://PlatformCLI::5Aep861R85s7ZWXls06hv9Iir12HPyb9lZWjHcGc3uRV2Dt6_VHjCOAAYgC9KQquuErWxroD98AOog4LM5hfxhA@copado-19e-dev-ed.my.salesforce.com
+${PLATFORM_AUTH_URL}            force://PlatformCLI::5Aep861ryecz0qkv5zpJzdOKjyCDhgU7x_sGpx2qF_pEJuYd_iigSdbO90h.DPk0b1Nkb6yg1TwDTuTd6vIGo3X@copado-b6.my.salesforce.com
 
 *** Keywords ***
 
