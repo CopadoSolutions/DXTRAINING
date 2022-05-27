@@ -14,9 +14,12 @@ Verify commit operation for Profiles and Fields
     [Tags]                      MultiCloud
     [Documentation]             Author: Dhanesh
     #Use case:
-    #Given: 2 Orgs using an MCDX pipeline, and the Src Org contains a new field and a profile with access to that field
-    #When: a MCDX commit in the US-XXX with selection of the field and the profile is performed << this is the action to be tested
-    #Then: the repository in the branch US-XXX we will find the right metadata for that profile field permissions and the field XML.
+    #Create a custom field and a  profile with access to the field - UI
+    #Create a User Story and commit the custom field and profile - UI
+    #Verify the commit job is successful - UI
+    #Verify the feature branch consist of field permission in the commited profile.xml - API
+    #Verify the feature branch consist of custom field metadata xml file - API
+    #Delete the created user story - API
 
     #Given
     Open Object                 User Stories
