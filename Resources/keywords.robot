@@ -123,7 +123,7 @@ Create User Story
     ${US_ID}=                   GetText                     ${USID_WEBELEMENT}
     [Return]                    ${US_ID}
 
-Base method for User Story creation
+Base Method For User Story Creation
     [Documentation]             Create User Story and return the User Story Name
     [Arguments]                 ${RECORD_TYPE}              ${PROJECT}                  ${CREDENTIAL}
     #Open "New User Story" window, select record type as per argument and enter other details
