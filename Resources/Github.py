@@ -25,8 +25,6 @@ class Github():
         for i in range(0, expected_list_size):
             if not(expected_list[i].__contains__(files_list[i])):
                 isCommit = False
-            else:
-                isCommit = True
         return isCommit   
     
     #Method to get the commited file names including path as a list from the latest commit
